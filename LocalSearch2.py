@@ -1,6 +1,7 @@
 import numpy as np
 import random as rd
 import time
+import math
 
 # Local search 2 tov 1
 #     stopping criteria voor tijd
@@ -21,7 +22,7 @@ class LocalSearch2:
     temperature = -1
     iterationsPerTemperatureReduction = -1
     temperatureReductionFactor = - 1
-    iterations = -1
+    evaluations = -1
 
 
     # // weight parameters
@@ -52,12 +53,13 @@ class LocalSearch2:
         self.e2 = e2
         self.w3 = w3
         self.e3 = e3
+        self.simulatedAnnealing = simulatedAnnealing
         if self.simulatedAnnealing:
             self.initialTemperature = initialTemperature
             self.temperature = initialTemperature
             self.iterationsPerTemperatureReduction = iterationsPerTemperatureReduction
             self.temperatureReductionFactor = temperatureReductionFactor
-            self.iterations = 0
+            self.evaluations = 0
 
     def solve(self, binPackingInstance, timeLimit):
         self.curr_solution = self.createInitialSolution(binPackingInstance)
@@ -144,6 +146,8 @@ class LocalSearch2:
 
 
     def move(self, binPackingInstance, input_solution):
+        self.evaluations += 1
+
         if self.shouldWeTerminate():
             return False
 
@@ -174,13 +178,26 @@ class LocalSearch2:
         return False
 
     def acceptOrNot(self, binPackingInstance, new_solution):
+
+        # decrease temperature periodically
+        if self.evaluations % self.iterationsPerTemperatureReduction == 0:
+            self.temperature = self.temperatureReductionFactor * self.temperature;
+
+        # always accept improvements:
         if binPackingInstance.evaluate(new_solution, self.w1, self.e1, self.w2, self.e2, self.w3, self.e3)[0] > self.curr_solutionValue:  # > because maximizatione
             [self.curr_solutionValue, self.maximumViolationsOverViolationTypes] = binPackingInstance.evaluate(
                 new_solution, self.w1, self.e1, self.w2, self.e2, self.w3, self.e3)
             self.curr_solution = new_solution
             return True
-        else:
-            print('we can use SA')
+
+        elif self.simulatedAnnealing:
+            acceptProbability = math.exp((binPackingInstance.evaluate(new_solution, self.w1, self.e1, self.w2, self.e2, self.w3, self.e3)[0] - self.curr_solutionValue)/self.temperature)
+            if rd.uniform(0, 1) < acceptProbability: # accept
+                [self.curr_solutionValue, self.maximumViolationsOverViolationTypes] = binPackingInstance.evaluate(
+                    new_solution, self.w1, self.e1, self.w2, self.e2, self.w3, self.e3)
+                self.curr_solution = new_solution
+                return True
+        return False
 
 
     def createInitialSolution(self, binPackingInstance):

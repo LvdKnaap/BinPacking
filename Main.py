@@ -8,10 +8,11 @@ import numpy as np
 timeLimit = 0.2 # in seconds
 weightSolvedInstances = 1
 weightTime = 0.1
-weightViolations = 0.1
+weightViolations = -0.1
+regularizationFactor = -0.002
 
 ###########################
-simulatedAnnealing = False
+simulatedAnnealing = True
 batchSizeType1 = 3
 batchSizeType2 = 3
 batchSizeType3 = 3
@@ -23,15 +24,17 @@ batchSize = batchSizeType1 + batchSizeType2 + batchSizeType3 + batchSizeType4 + 
 
 # Bounded region of parameter space
 # pbounds = {'w1': (-5, 5), 'e1': (-2, 4), 'w2': (-5, 5), 'e2': (-3, 2), 'w3': (-5, 5), 'e3': (-1, 4)}
-pbounds = {'w1': (-10, 10), 'w3': (-5, 10)}
+pbounds = {'w1': (-10, 10), 'w3': (2, 2.001)}
 
 # def black_box_function(w1, e1, w2, e2, w3, e3):
-def black_box_function(w1, w3,):
+def black_box_function(w1, w3):
+    localsAtStart = locals()
+
     binpackingBatch = BinPackingBatchCustom(batchSizeType1, batchSizeType2, batchSizeType3, batchSizeType4, batchSizeType5)
-    totalScoreSolvedInstances, totalScoreTime, totalScoreViolations = 0, 0, 0;
+    totalScoreSolvedInstances, totalScoreTime, totalScoreViolations, totalScoreRegularizationFactor = 0, 0, 0, 0;
 
     # solver = LocalSearch2(1, 1, 1, 2 ** w1, e1, 2 ** w2, e2, 2 ** w3, e3)
-    solver = LocalSearch2(1, 1, 1, 2 ** w1, 1, 1, 1, 2 ** w3, 1, simulatedAnnealing, 100, 10, 0.99)
+    solver = LocalSearch2(1, 1, 1, 2 ** w1, 1, 1, 1, 2 ** w3, 1, simulatedAnnealing, 10, 10, 0.99)
     for i in range(batchSize):
         solver.solve(binpackingBatch.instances[i], timeLimit)
 
@@ -51,16 +54,21 @@ def black_box_function(w1, w3,):
         # TODO:  " while all non-feasible solutions have solve time equals time limit (so no deduction in term 2)"
             # dit is niet waar. Als we in een local optimum zitten die non-feasible is, kan de oplossing returnen binnen time limit.
         totalScoreTime += weightTime * max(0, timeLimit - solver.solveTime) / batchSize
-        totalScoreViolations -= weightViolations * solver.maximumViolationsOverViolationTypes / batchSize
+        totalScoreViolations += weightViolations * solver.maximumViolationsOverViolationTypes / batchSize
 
-    print(totalScoreSolvedInstances, round(totalScoreTime,2), round(totalScoreViolations,2))
-    return totalScoreSolvedInstances + totalScoreTime + totalScoreViolations
+
+    # TODO: test met regularizationFactor. Minnetjes en plusjes in 1 functie moet consistent worden
+    for keyOfFunctionArgument in localsAtStart:
+        totalScoreRegularizationFactor += regularizationFactor * localsAtStart.get(keyOfFunctionArgument) ** 2
+
+    print(totalScoreSolvedInstances, round(totalScoreTime,2), round(totalScoreViolations,2), round(totalScoreRegularizationFactor, 2))
+    return totalScoreSolvedInstances + totalScoreTime + totalScoreViolations + totalScoreRegularizationFactor
 
 
 optimizer = BayesianOptimization(
     f = black_box_function,
     pbounds=pbounds,
-    random_state=1,
+    random_state=13,
 )
 
 optimizer.maximize(
