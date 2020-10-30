@@ -1,6 +1,6 @@
 from bayes_opt import BayesianOptimization
-from BinPacking2 import *
-from LocalSearch2 import *
+from Old.BinPacking2 import *
+from Old.LocalSearch2 import *
 
 ##### HYPERPARAMETERS <3
 timeLimit = 0.5 # in seconds

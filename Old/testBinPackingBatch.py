@@ -1,5 +1,5 @@
-from BinPacking2 import *
-from LocalSearch2 import *
+from Old.BinPacking2 import *
+from Old.LocalSearch2 import *
 
 batchSizeType1 = 0
 batchSizeType2 = 0

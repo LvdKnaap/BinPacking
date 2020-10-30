@@ -1,6 +1,6 @@
 from bayes_opt import BayesianOptimization
 from Experiment.BinPackingBatch import *
-from LocalSearch2 import * # todo moet weg
+from Old.LocalSearch2 import * # todo moet weg
 
 
 class SurrogateModel:

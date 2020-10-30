@@ -1,8 +1,8 @@
 import hyperopt as hyperopt
-from BinPacking import *
-from LocalSearch import *
+from Old.BinPacking import *
+from Old.LocalSearch import *
 import random as rd
-import numpy as np
+
 
 # define an objective function
 # def objective(args):

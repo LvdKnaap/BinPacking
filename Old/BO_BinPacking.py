@@ -1,8 +1,7 @@
 from bayes_opt import BayesianOptimization
-from BinPacking import *
-from LocalSearch import *
+from Old.BinPacking import *
+from Old.LocalSearch import *
 import random as rd
-import numpy as np
 
 # Bounded region of parameter space
 pbounds = {'useMoveAux': (0, 2), 'useSwapAux': (0, 2), 'useMergeAux': (0, 2)}
