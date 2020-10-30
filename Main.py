@@ -5,7 +5,7 @@ import random as rd
 import numpy as np
 
 ##### HYPERPARAMETERS <3
-timeLimit = 0.2 # in seconds
+timeLimit = 0.5 # in seconds
 weightSolvedInstances = 1
 weightTime = 0.1
 weightViolations = -0.1
@@ -13,10 +13,10 @@ regularizationFactor = -0.002
 
 ###########################
 simulatedAnnealing = True
-batchSizeType1 = 3
-batchSizeType2 = 3
-batchSizeType3 = 3
-batchSizeType4 = 0
+batchSizeType1 = 0
+batchSizeType2 = 0
+batchSizeType3 = 0
+batchSizeType4 = 10
 batchSizeType5 = 0
 batchSize = batchSizeType1 + batchSizeType2 + batchSizeType3 + batchSizeType4 + batchSizeType5
 ##########################
@@ -24,11 +24,13 @@ batchSize = batchSizeType1 + batchSizeType2 + batchSizeType3 + batchSizeType4 + 
 
 # Bounded region of parameter space
 # pbounds = {'w1': (-5, 5), 'e1': (-2, 4), 'w2': (-5, 5), 'e2': (-3, 2), 'w3': (-5, 5), 'e3': (-1, 4)}
-pbounds = {'w1': (-10, 10), 'w3': (2, 2.001)}
+pbounds = {'w1': (-10, 10), 'w3': (-1, 3)}
 
 # def black_box_function(w1, e1, w2, e2, w3, e3):
 def black_box_function(w1, w3):
     localsAtStart = locals()
+    print()
+    print('attempting: ', localsAtStart)
 
     binpackingBatch = BinPackingBatchCustom(batchSizeType1, batchSizeType2, batchSizeType3, batchSizeType4, batchSizeType5)
     totalScoreSolvedInstances, totalScoreTime, totalScoreViolations, totalScoreRegularizationFactor = 0, 0, 0, 0;
