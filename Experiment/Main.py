@@ -1,29 +1,17 @@
-from bayes_opt import BayesianOptimization
-from BinPacking2 import *
-from LocalSearch2 import *
-import random as rd
-import numpy as np
 from Experiment.SurrogateModel import *
-from Experiment.Settings import *
+
+from Settings.CustomSettings import *
+from Settings.BinPackingSettings import *
+from Settings.LocalSearchSettings import *
+from Settings.SurrogateModelSettings import *
 
 
-settings = Settings()
+customSettings, localSearchSettings, surrogateModelSettings, binPackingSettings = CustomSettings(), LocalSearchSettings(), SurrogateModelSettings(), BinPackingSettings()
 
 
+if surrogateModelSettings.BO:
+    surrogateModel = BayesianSurrogateModel(surrogateModelSettings, localSearchSettings, customSettings, binPackingSettings).solve(surrogateModelSettings)
 
-# INSTELLINGEN SURROGATE MODEL
-pbounds = {'w1': (-10, 10), 'w3': (-1, 3)}
+if surrogateModelSettings.hyperOpt:
+    surrogateModel = HyperoptSurrogateModel(surrogateModelSettings, localSearchSettings, customSettings, binPackingSettings).solve(surrogateModelSettings)
 
-
-
-type = 'BO'
-# EIND INSTELLINGEN SURROGATE MODEL
-if type == 'BO':
-    surrogateModel = BayesianSurrogateModel(pbounds, settings)
-elif type == 'hyperopt':
-    surrogateModel = HyperoptSurrogateModel()
-
-
-
-# GOOOO
-surrogateModel.solve(settings)

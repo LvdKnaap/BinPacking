@@ -1,9 +1,5 @@
 from BinPacking2 import *
 from LocalSearch2 import *
-import random as rd
-import numpy as np
-import time
-
 
 batchSizeType1 = 0
 batchSizeType2 = 0
