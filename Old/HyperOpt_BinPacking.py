@@ -30,6 +30,9 @@ space = {
 }
 
 
+print(space)
+
+
 # minimize the objective over the space
 best = hyperopt.fmin(
     fn=objective,

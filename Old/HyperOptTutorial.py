@@ -17,6 +17,7 @@ space = hyperopt.hp.choice('a',
         ('case 2', hyperopt.hp.uniform('c2', -10, 10))
     ])
 
+
 # minimize the objective over the space
 best = hyperopt.fmin(objective, space, algo=hyperopt.tpe.suggest, max_evals=100)
 
