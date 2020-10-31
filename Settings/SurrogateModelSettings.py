@@ -25,3 +25,4 @@ class SurrogateModelSettings:
         # HYPEROPT SETTINGS
         self.algo_ho = 'hyperopt.tpe.suggest'
         self.max_evals_ho = 5
+        # TODO HYPEROPT MOET OOK EEN RANDOMSTATE OID, een seed

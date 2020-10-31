@@ -33,7 +33,7 @@ class BayesianSurrogateModel(SurrogateModel):
 
             # solver = LocalSearch2(1, 1, 1, 2 ** w1, e1, 2 ** w2, e2, 2 ** w3, e3)
             # todo: settings geburiken
-            solver = LocalSearch2(1, 1, 1, 2 ** w1, 1, 1, 1, 2 ** w3, 1, localSearchSettings.simulatedAnnealing, 10, 10, 0.99)
+            solver = LocalSearch2(2 ** w1, 1, 1, 1, 2 ** w3, 1, localSearchSettings)
             for i in range(binPackingSettings.batchSize):
                 solver.solve(binpackingBatch.instances[i], customSettings.timeLimit)
 
@@ -112,9 +112,7 @@ class HyperoptSurrogateModel(SurrogateModel):
                                                     binPackingSettings.batchSizeType5)
             totalScoreSolvedInstances, totalScoreTime, totalScoreViolations, totalScoreRegularizationFactor = 0, 0, 0, 0;
 
-
-            solver = LocalSearch2(1, 1, 1, 2 ** w1, 1, 1, 1, 2 ** w3, 1, localSearchSettings.simulatedAnnealing, 10, 10,
-                                  0.99)
+            solver = LocalSearch2(2 ** w1, 1, 1, 1, 2 ** w3, 1, localSearchSettings)
             for i in range(binPackingSettings.batchSize):
                 solver.solve(binpackingBatch.instances[i], customSettings.timeLimit)
 

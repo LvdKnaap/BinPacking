@@ -16,19 +16,6 @@ import math
 
 class LocalSearch2:
     # Local search rules:
-    # useMove = False
-    # useSwap = False
-    # useMerge = False
-
-    # Simulated annealing
-    simulatedAnnealing = False
-    initialTemperature = -1
-    temperature = -1
-    iterationsPerTemperatureReduction = -1
-    temperatureReductionFactor = - 1
-    evaluations = -1
-
-
     # // weight parameters
     w1 = 0
     e1 = 0
@@ -36,6 +23,9 @@ class LocalSearch2:
     e2 = 0
     w3 = 0
     e3 = 0
+    localSearchSettings = ""
+
+    localSearchtype = ""
 
     # stopping criteria:
     budget_evaluations = 0
@@ -47,23 +37,24 @@ class LocalSearch2:
     curr_solutionValue = False;
     curr_solution = 0;
 
-    def __init__(self, useMove, useSwap, useMerge, w1, e1, w2, e2, w3, e3, simulatedAnnealing, initialTemperature, iterationsPerTemperatureReduction, temperatureReductionFactor):
-        self.useMove = useMove
-        self.useSwap = useSwap
-        self.useMerge = useMerge
+    def __init__(self,  w1, e1, w2, e2, w3, e3, localSearchSettings):
+        self.localSearchSettings = localSearchSettings
+        # TODO: IS ER EEN GOEDE PLEK OM WEIGHT PARAMETERS TE ZETTEN? LIEFST ZODAT HET METEEN GEGARANDEERD IS DAT ZE ALLEMAAL OF FIXED, OF VARIABLE (dus in SurrogateModelSettings) zitten
         self.w1 = w1
         self.e1 = e1
         self.w2 = w2
         self.e2 = e2
         self.w3 = w3
         self.e3 = e3
-        self.simulatedAnnealing = simulatedAnnealing
-        if self.simulatedAnnealing:
-            self.initialTemperature = initialTemperature
-            self.temperature = initialTemperature
-            self.iterationsPerTemperatureReduction = iterationsPerTemperatureReduction
-            self.temperatureReductionFactor = temperatureReductionFactor
-            self.evaluations = 0
+
+        if localSearchSettings.simulatedAnnealing:
+            self.localSearchtype = 'SA'
+        elif localSearchSettings.variableNeighborhoodSearch:
+            self.localSearchtype = 'VNS'
+        else:
+            self.localSearchtype = 'HC' # hill climbing
+
+
 
     def solve(self, binPackingInstance, timeLimit):
         self.curr_solution = self.createInitialSolution(binPackingInstance)
@@ -86,7 +77,7 @@ class LocalSearch2:
         if self.shouldWeTerminate():
             return False
 
-        if self.useMerge == 1:
+        if self.localSearchSettings.useMerge == 1:
             binOrder1 = list(range(binPackingInstance.numBins))
             rd.shuffle(binOrder1)
             binOrder2 = list(range(binPackingInstance.numBins))
@@ -114,7 +105,7 @@ class LocalSearch2:
         if self.shouldWeTerminate():
             return False
 
-        if self.useSwap == 1:
+        if self.localSearchSettings.useSwap == 1:
             itemOrder1 = list(range(binPackingInstance.numItems))
             rd.shuffle(itemOrder1)
             itemOrder2 = list(range(binPackingInstance.numItems))
@@ -150,12 +141,12 @@ class LocalSearch2:
 
 
     def move(self, binPackingInstance, input_solution):
-        self.evaluations += 1
+        self.localSearchSettings.evaluations += 1
 
         if self.shouldWeTerminate():
             return False
 
-        if self.useMove == 1:
+        if self.localSearchSettings.useMove == 1:
             itemOrder = list(range(binPackingInstance.numItems))
             rd.shuffle(itemOrder)
             # binOrder = list(range(binPackingInstance.numBins))
@@ -184,8 +175,8 @@ class LocalSearch2:
     def acceptOrNot(self, binPackingInstance, new_solution):
 
         # decrease temperature periodically
-        if self.evaluations % self.iterationsPerTemperatureReduction == 0:
-            self.temperature = self.temperatureReductionFactor * self.temperature;
+        if self.localSearchSettings.evaluations % self.localSearchSettings.iterationsPerTemperatureReduction == 0:
+            self.localSearchSettings.temperature = self.localSearchSettings.temperatureReductionFactor * self.localSearchSettings.temperature;
 
         # always accept improvements:
         if binPackingInstance.evaluate(new_solution, self.w1, self.e1, self.w2, self.e2, self.w3, self.e3)[0] > self.curr_solutionValue:  # > because maximizatione
@@ -194,8 +185,8 @@ class LocalSearch2:
             self.curr_solution = new_solution
             return True
 
-        elif self.simulatedAnnealing:
-            acceptProbability = math.exp((binPackingInstance.evaluate(new_solution, self.w1, self.e1, self.w2, self.e2, self.w3, self.e3)[0] - self.curr_solutionValue)/self.temperature)
+        elif self.localSearchSettings.simulatedAnnealing:
+            acceptProbability = math.exp((binPackingInstance.evaluate(new_solution, self.w1, self.e1, self.w2, self.e2, self.w3, self.e3)[0] - self.curr_solutionValue)/self.localSearchSettings.temperature)
             if rd.uniform(0, 1) < acceptProbability: # accept
                 [self.curr_solutionValue, self.maximumViolationsOverViolationTypes] = binPackingInstance.evaluate(
                     new_solution, self.w1, self.e1, self.w2, self.e2, self.w3, self.e3)

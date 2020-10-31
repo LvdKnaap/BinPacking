@@ -4,28 +4,24 @@ class LocalSearchSettings:
     def __init__(self):
 
         self.simulatedAnnealing = True
-        # self.useMove = True
-        # self.useSwap = True
-        # self.useMerge = True
-        #
-        # solver = LocalSearch2(1, 1, 1, 2 ** w1, 1, 1, 1, 2 ** w3, 1, localSearchSettings.simulatedAnnealing, 10, 10,
-        #                       0.99)
-        #
-        # def __init__(self, useMove, useSwap, useMerge, w1, e1, w2, e2, w3, e3, simulatedAnnealing, initialTemperature,
-        #              iterationsPerTemperatureReduction, temperatureReductionFactor):
-        #     self.useMove = useMove
-        #     self.useSwap = useSwap
-        #     self.useMerge = useMerge
-        #     self.w1 = w1
-        #     self.e1 = e1
-        #     self.w2 = w2
-        #     self.e2 = e2
-        #     self.w3 = w3
-        #     self.e3 = e3
-        #     self.simulatedAnnealing = simulatedAnnealing
-        #     if self.simulatedAnnealing:
-        #         self.initialTemperature = initialTemperature
-        #         self.temperature = initialTemperature
-        #         self.iterationsPerTemperatureReduction = iterationsPerTemperatureReduction
-        #         self.temperatureReductionFactor = temperatureReductionFactor
-        #         self.evaluations = 0
+        self.variableNeighborhoodSearch = False # TODO INCORPORATE
+        # neighborhoodrules either jointly or in isolation
+        self.jointNeighborhoodRules = False # TODO INCORPORATE
+
+        self.useMove = True
+        self.useSwap = True
+        self.useMerge = True
+
+        # SA Settinggs
+        self.initialTemperature = 10
+        self.iterationsPerTemperatureReduction = 10
+        self.temperatureReductionFactor = 0.99
+        self.evaluations = 0
+        self.temperature = self.initialTemperature
+
+        # VNS Settings
+        self.minRandomWalks = 3
+        self.maxRandomWalks = 6
+        self.maxReduction = 10
+
+        assert not(self.simulatedAnnealing and self.variableNeighborhoodSearch), "You cannot use Simulated Annealing AND Variable Neighborhood Search"
