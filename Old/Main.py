@@ -11,11 +11,11 @@ regularizationFactor = -0.002
 
 ###########################
 simulatedAnnealing = True
-batchSizeType1 = 0
-batchSizeType2 = 0
-batchSizeType3 = 0
-batchSizeType4 = 10
-batchSizeType5 = 0
+batchSizeType1 = 2
+batchSizeType2 = 2
+batchSizeType3 = 2
+batchSizeType4 = 0
+batchSizeType5 = 2
 batchSize = batchSizeType1 + batchSizeType2 + batchSizeType3 + batchSizeType4 + batchSizeType5
 ##########################
 

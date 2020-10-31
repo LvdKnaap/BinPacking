@@ -17,11 +17,11 @@ class SurrogateModelSettings:
         # BAYESIAN OPTIMISATION SETTINGS
         self.randomState_bo = 13
         self.init_points_bo = 3
-        self.n_iter_bo = 5
+        self.n_iter_bo = 2
         self.acq_bo = 'ucb' # 'ei'
         # self.alpha = 1e-2
 
 
         # HYPEROPT SETTINGS
         self.algo_ho = 'hyperopt.tpe.suggest'
-        self.max_evals_ho = 10
+        self.max_evals_ho = 5

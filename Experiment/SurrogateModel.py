@@ -131,7 +131,7 @@ class HyperoptSurrogateModel(SurrogateModel):
 
             print(round(totalScoreSolvedInstances + totalScoreTime + totalScoreViolations + totalScoreRegularizationFactor,2))
 
-            return totalScoreSolvedInstances + totalScoreTime + totalScoreViolations + totalScoreRegularizationFactor
+            return -1 * (totalScoreSolvedInstances + totalScoreTime + totalScoreViolations + totalScoreRegularizationFactor)
 
         # minimize the objective over the space
         best = hyperopt.fmin(

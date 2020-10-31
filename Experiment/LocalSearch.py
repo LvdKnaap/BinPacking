@@ -16,9 +16,9 @@ import math
 
 class LocalSearch2:
     # Local search rules:
-    useMove = False
-    useSwap = False
-    useMerge = False
+    # useMove = False
+    # useSwap = False
+    # useMerge = False
 
     # Simulated annealing
     simulatedAnnealing = False
