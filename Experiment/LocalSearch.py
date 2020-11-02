@@ -37,15 +37,8 @@ class LocalSearch2:
     curr_solutionValue = False;
     curr_solution = 0;
 
-    def __init__(self,  w1, e1, w2, e2, w3, e3, localSearchSettings):
+    def __init__(self,localSearchSettings):
         self.localSearchSettings = localSearchSettings
-        # TODO: IS ER EEN GOEDE PLEK OM WEIGHT PARAMETERS TE ZETTEN? LIEFST ZODAT HET METEEN GEGARANDEERD IS DAT ZE ALLEMAAL OF FIXED, OF VARIABLE (dus in SurrogateModelSettings) zitten
-        self.w1 = w1
-        self.e1 = e1
-        self.w2 = w2
-        self.e2 = e2
-        self.w3 = w3
-        self.e3 = e3
 
         if localSearchSettings.simulatedAnnealing:
             self.localSearchtype = 'SA'
@@ -72,6 +65,9 @@ class LocalSearch2:
     def performOneIteration(self, binPackingInstance):
         return self.merge(binPackingInstance, self.curr_solution) # eerst merge, dan swap, dan move
         return False
+
+
+
 
     def merge(self, binPackingInstance, input_solution):
         if self.shouldWeTerminate():
@@ -212,3 +208,28 @@ class LocalSearch2:
 
         # base
         return False
+
+    # Set all weights to specified in settings. They will be overwritten by setVariableWeights
+    def setInitialWeights(self, surrogateModelSettings):
+        self.w1 = surrogateModelSettings.fixedParameters['w1']
+        self.e1 = surrogateModelSettings.fixedParameters['e1']
+        self.w2 = surrogateModelSettings.fixedParameters['w2']
+        self.e2 = surrogateModelSettings.fixedParameters['e2']
+        self.w3 = surrogateModelSettings.fixedParameters['w3']
+        self.e3 = surrogateModelSettings.fixedParameters['e3']
+
+    # Only overwrite variable weights
+    def setVariableWeights(self, localsAtStart_dict):
+        if 'w1' in localsAtStart_dict:
+            self.w1 = localsAtStart_dict['w1']
+        if 'e1' in localsAtStart_dict:
+            self.e1 = localsAtStart_dict['e1']
+        if 'w2' in localsAtStart_dict:
+            self.w2 = localsAtStart_dict['w2']
+        if 'e2' in localsAtStart_dict:
+            self.e2 = localsAtStart_dict['e2']
+        if 'w3' in localsAtStart_dict:
+            self.w3 = localsAtStart_dict['w3']
+        if 'e3' in localsAtStart_dict:
+            self.e3 = localsAtStart_dict['e3']
+

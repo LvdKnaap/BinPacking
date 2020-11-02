@@ -4,7 +4,9 @@ class BinPackingBatchCustom:
 
     instances = []
 
-    def __init__(self, numberOfInstancesType1, numberOfInstancesType2, numberOfInstancesType3, numberOfInstancesType4, numberOfInstancesType5):
+    # TODO: DEZE CLASS OPSCHONEN
+
+    def __init__(self, binPackingSettings):
         # (some sort of) lower bounds on instance sizes
         LB1 = 3 # (multiplied by 2)
         LB2 = 2 # (multiplied by 5)
@@ -15,15 +17,15 @@ class BinPackingBatchCustom:
         LB5 = 10
         stepSize5 = 1
         self.instances = []
-        for i in range(numberOfInstancesType1):
+        for i in range(binPackingSettings.batchSizeType1):
             self.instances.append(BinPackingCustom(2*(i+LB1), 1)) # i+3 zorgt voor lower bound, kleine instances zijn té makkelijk
-        for i in range(numberOfInstancesType2):
+        for i in range(binPackingSettings.batchSizeType2):
             self.instances.append(BinPackingCustom(5*(i+LB2), 2)) # i+3 zorgt voor lower bound, kleine instances zijn té makkelijk
-        for i in range(numberOfInstancesType3):
+        for i in range(binPackingSettings.batchSizeType2):
             self.instances.append(BinPackingCustom(stepSize3*i+LB3, 3))
-        for i in range(numberOfInstancesType4):
+        for i in range(binPackingSettings.batchSizeType4):
             self.instances.append(BinPackingCustom(stepSize4*i+LB4, 4))
-        for i in range(numberOfInstancesType5):
+        for i in range(binPackingSettings.batchSizeType5):
             self.instances.append(BinPackingCustom(stepSize5*i+LB5, 5))
 
 
