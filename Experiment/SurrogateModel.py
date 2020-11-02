@@ -40,6 +40,11 @@ def updateScoreBatch(self, surrogateModelSettings, customSettings, localsAtStart
         self.totalScoreRegularizationFactor += customSettings.regularizationFactor * localsAtStart[i][1] ** customSettings.regularizationFactorExponent
 
 
+def printInfo(self):
+    print(self.totalScoreSolvedInstances, round(self.totalScoreTime, 2), round(self.totalScoreViolations, 2),
+          round(self.totalScoreRegularizationFactor, 2))
+
+    print(round(self.totalScoreSolvedInstances + self.totalScoreTime + self.totalScoreViolations + self.totalScoreRegularizationFactor,2))
 
 
 class BayesianSurrogateModel(SurrogateModel):
@@ -52,12 +57,10 @@ class BayesianSurrogateModel(SurrogateModel):
         self.binPackingSettings = binPackingSettings
 
 
-
         def black_box_function(w1, w3):
             localsAtStart = list(locals().items())[:len(surrogateModelSettings.pbounds_bo)]
             localsAtStart_dict = locals()
-            print()
-            print('attempting: ', localsAtStart)
+            print(); print('attempting: ', localsAtStart)
 
             # Create the bin packing problem instances
             binpackingBatch = BinPackingBatchCustom(binPackingSettings)
@@ -73,21 +76,17 @@ class BayesianSurrogateModel(SurrogateModel):
             self.totalScoreSolvedInstances, self.totalScoreTime, self.totalScoreViolations, self.totalScoreRegularizationFactor = 0, 0, 0, 0;
             for i in range(binPackingSettings.batchSize):
                 solver.solve(binpackingBatch.instances[i], customSettings.timeLimit)
+
+                # Update the score based on the solving performance of the single instance
                 updateScoreSingleInstance(self, solver, customSettings, binPackingSettings)
+
+            # Update the score based on the solving performance of the batch
             updateScoreBatch(self, surrogateModelSettings, customSettings, localsAtStart)
 
-
-            # TODO: test met regularizationFactor. Minnetjes en plusjes in 1 functie moet consistent worden
-            # updateScoreBatch(self, solver, customSettings, binPackingSettings)
-            # for i in range(len(surrogateModelSettings.pbounds_bo)):
-            #     self.totalScoreRegularizationFactor += customSettings.regularizationFactor * localsAtStart[i][1] ** 2
-
-
-            print(self.totalScoreSolvedInstances, round(self.totalScoreTime, 2), round(self.totalScoreViolations, 2),
-                  round(self.totalScoreRegularizationFactor, 2))
+            if surrogateModelSettings.printInformation_bo:
+                printInfo(self)
 
             return self.totalScoreSolvedInstances + self.totalScoreTime + self.totalScoreViolations + self.totalScoreRegularizationFactor
-
 
 
         self.optimizer = BayesianOptimization(
@@ -129,8 +128,6 @@ class HyperoptSurrogateModel(SurrogateModel):
 
 
         def objective(params):
-
-            # TODO: CHECKEN OF DIT HET LANGZAMER MAAKT; HET LOOPEN OVER PARAMS
             if 'w1' in params:
                 w1 = params['w1']
             if 'e1' in params:
@@ -148,7 +145,6 @@ class HyperoptSurrogateModel(SurrogateModel):
 
             binpackingBatch = BinPackingBatchCustom(binPackingSettings)
 
-
             # Create the local search solver
             solver = LocalSearch2(localSearchSettings)
             # Read all initial weights (the variable weights that are arguments to this function will be overwritten later
@@ -157,30 +153,20 @@ class HyperoptSurrogateModel(SurrogateModel):
             solver.setVariableWeights(params)
 
             # Initialize score components
-            totalScoreSolvedInstances, totalScoreTime, totalScoreViolations, totalScoreRegularizationFactor = 0, 0, 0, 0;
-            # self.totalScoreSolvedInstances, self.totalScoreTime, self.totalScoreViolations, self.totalScoreRegularizationFactor = 0, 0, 0, 0;
-            # for i in range(binPackingSettings.batchSize):
-            #     solver.solve(binpackingBatch.instances[i], customSettings.timeLimit)
-            #     updateScoreSingleInstance(self, solver, customSettings, binPackingSettings)
-            # updateScoreBatch(self, surrogateModelSettings, customSettings, localsAtStart)
-
+            self.totalScoreSolvedInstances, self.totalScoreTime, self.totalScoreViolations, self.totalScoreRegularizationFactor = 0, 0, 0, 0;
             for i in range(binPackingSettings.batchSize):
                 solver.solve(binpackingBatch.instances[i], customSettings.timeLimit)
 
-                if solver.curr_solutionValue == 0:
-                    totalScoreSolvedInstances += customSettings.weightSolvedInstances * 1
+                # Update the score based on the solving performance of the single instance
+                updateScoreSingleInstance(self, solver, customSettings, binPackingSettings)
 
-                totalScoreTime += customSettings.weightTime * max(0,
-                                                                  customSettings.timeLimit - solver.solveTime) / binPackingSettings.batchSize
-                totalScoreViolations += customSettings.weightViolations * solver.maximumViolationsOverViolationTypes / binPackingSettings.batchSize
+            # Update the score based on the solving performance of the batch
+            updateScoreBatch(self, surrogateModelSettings, customSettings, list(params.items())[:len(surrogateModelSettings.space_ho)])
 
-            # TODO: test met regularizationFactor. Minnetjes en plusjes in 1 functie moet consistent worden
-            for wi in [w1, w3]:
-                totalScoreRegularizationFactor += customSettings.regularizationFactor * wi ** 2
+            if surrogateModelSettings.printInformation_ho:
+                printInfo(self)
 
-            print(round(totalScoreSolvedInstances + totalScoreTime + totalScoreViolations + totalScoreRegularizationFactor,2))
-
-            return -1 * (totalScoreSolvedInstances + totalScoreTime + totalScoreViolations + totalScoreRegularizationFactor)
+            return -1 * (self.totalScoreSolvedInstances + self.totalScoreTime + self.totalScoreViolations + self.totalScoreRegularizationFactor)
 
         # minimize the objective over the space
         best = hyperopt.fmin(
@@ -190,6 +176,4 @@ class HyperoptSurrogateModel(SurrogateModel):
             max_evals=surrogateModelSettings.max_evals_ho
         )
 
-
-        print(best)
         print(hyperopt.space_eval(surrogateModelSettings.space_ho, best))

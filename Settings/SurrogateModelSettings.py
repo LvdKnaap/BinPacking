@@ -23,6 +23,7 @@ class SurrogateModelSettings:
         }
 
         # BAYESIAN OPTIMISATION SETTINGS
+        self.printInformation_bo = True
         self.randomState_bo = 13
         self.init_points_bo = 3
         self.n_iter_bo = 2
@@ -31,6 +32,7 @@ class SurrogateModelSettings:
 
 
         # HYPEROPT SETTINGS
+        self.printInformation_ho = True
         self.algo_ho = 'hyperopt.tpe.suggest'
         self.max_evals_ho = 5
         # TODO HYPEROPT MOET OOK EEN RANDOMSTATE OID, een seed
