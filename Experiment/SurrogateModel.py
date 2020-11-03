@@ -25,6 +25,7 @@ def updateScoreSingleInstance(self, solver, customSettings, binPackingSettings):
     instanceScoreTime = -solver.solveTime / customSettings.timeLimit
 
     # 3:
+    # Todo: deze belangrijker aanwezig maken. Wil ik op een manier toch weer 'solver.maximumViolationsOverViolationTypes' gebruiken?
     instanceScoreViolations = -sum(solver.violationsPerType) / solver.numberOfConstraints
 
     # Normalize 2 + 3
@@ -66,6 +67,20 @@ def printInfo(self):
           round(self.totalScoreRegularizationFactor, 2))
 
     print(round(self.totalScoreSolvedInstances + self.totalScoreTime + self.totalScoreViolations + self.totalScoreRegularizationFactor,2))
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 class BayesianSurrogateModel(SurrogateModel):

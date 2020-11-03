@@ -10,13 +10,13 @@ customSettings, localSearchSettings, surrogateModelSettings, binPackingSettings 
     CustomSettings(), LocalSearchSettings(), SurrogateModelSettings(), BinPackingSettings()
 
 
-# if surrogateModelSettings.BO:
-#     surrogateModel = BayesianSurrogateModel(surrogateModelSettings, localSearchSettings,
-#                                             customSettings, binPackingSettings).solve(surrogateModelSettings)
+if surrogateModelSettings.BO:
+    surrogateModel = BayesianSurrogateModel(surrogateModelSettings, localSearchSettings,
+                                            customSettings, binPackingSettings).solve(surrogateModelSettings)
 
-# if surrogateModelSettings.hyperOpt:
-#     surrogateModel = HyperoptSurrogateModel(surrogateModelSettings, localSearchSettings,
-#                                             customSettings, binPackingSettings)
+if surrogateModelSettings.hyperOpt:
+    surrogateModel = HyperoptSurrogateModel(surrogateModelSettings, localSearchSettings,
+                                            customSettings, binPackingSettings)
 
 
 

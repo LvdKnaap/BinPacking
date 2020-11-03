@@ -4,12 +4,9 @@ class BinPackingBatchCustom:
 
     instances = []
 
-    # TODO: DEZE CLASS OPSCHONEN
-
     def __init__(self, binPackingSettings):
-        # (some sort of) lower bounds on instance sizes
-
         self.instances = []
+
         for i in range(binPackingSettings.batchSizeType1):
             self.instances.append(BinPackingCustom(binPackingSettings.stepsize1*i+binPackingSettings.LB1, 1, binPackingSettings))
         for i in range(binPackingSettings.batchSizeType2):
@@ -24,11 +21,10 @@ class BinPackingBatchCustom:
             self.instances.append(BinPackingCustom(binPackingSettings.stepSize6*i+binPackingSettings.LB6, 6, binPackingSettings))
 
 
-
 class BinPackingCustom:
 
-    numBins = 0;
-    numItems = 0;
+    numBins = -1;
+    numItems = -1;
     capacities = [];
     itemWeights = []
     numberOfConstraints = -1
@@ -38,6 +34,7 @@ class BinPackingCustom:
         self.numItems = numItems;
         self.itemWeights = []
         self.capacities = []
+        self.binPackingSettings = binPackingSettings
 
         if type == 1: # standaard counter example voor greedy algorithms
 
@@ -90,7 +87,6 @@ class BinPackingCustom:
                 self.itemWeights.append(1)
 
         elif type == 5: # random instances generator
-            # TODO: moet beter (iig moet het werken voor step size 1)
             # momenteel: items krijgen unifrom int weight [1,4]. (dus average weight = 2.5)
                 # bins = aantal items / 2 + 1 dus hopelijk voldoende ruimte
             self.numBins = int(numItems / 2) + 1
@@ -102,7 +98,7 @@ class BinPackingCustom:
                 self.itemWeights.append(rd.randint(1,4))
 
 
-        elif type == 6: # random instances generator
+        elif type == 6:
             # type 6: N items, N bins, unieke item weights 1..N, unieke bin sizes 1..N.
             # Dus er bestaat maaar 1 oplossing: optimale solution moet er uit zien als identity matrix
             self.numBins = numItems
@@ -132,37 +128,30 @@ class BinPackingCustom:
         violationsPerType = []
         objective = 0
 
-        # 1. unassigned per item (boolean)
+        # term 1. unassigned per item (boolean)
         violationsPerType.append(0)
         countUnassignedItems = 0
 
         for i in range(self.numItems):
             countThisItemAssigned = 0
-            # unassigned = True
             for j in range(self.numBins):
                 if allocation[i][j]:
                     countThisItemAssigned += 1
-                    # if not unassigned:
-                    #     print('error: 2x assigned. Dit is een hard constraint. Dit is niet de bedoeling!')
-                    # else:
-                    #     unassigned = False
-            if countThisItemAssigned > 1:
-                print('error: 2x assigned. Dit is een hard constraint. Dit is niet de bedoeling!')
-            elif countThisItemAssigned == 0:
-            # if unassigned:
+            assert countThisItemAssigned <= 1, "error: 2x assigned. Dit is een hard constraint. Dit is niet de bedoeling!"
+
+            # Check if the constraints is satisfied.
+            if countThisItemAssigned == 0:
                 countUnassignedItems += 1
                 violationsPerType[0] += 1
 
         objective += w1 * countUnassignedItems ** e1
 
-        # 2. maximum violated bin capacity (over bins)
+
+        # term 2. violated bin capacity per bin (amount / integer)
         violationsPerType.append(0)
-        # TODO: is het w1 * \sum ( TERM ) ^ e1 of
-        #     w1 * (\sum (TERM)) ^ e1 ?
-        # ik doe nu de eerste
-        totalPenaltyForCapViolation = 0
+        totalCapViolation = 0
+
         for j in range(self.numBins):
-            # violatedCapOfThisBin = -self.capacity
             violatedCapOfThisBin = -self.capacities[j]
             for i in range(self.numItems):
                 if allocation[i][j]:
@@ -172,19 +161,17 @@ class BinPackingCustom:
             violationsPerType[1] += min(1, violatedCapOfThisBin)
 
             if violatedCapOfThisBin > 0:
-                totalPenaltyForCapViolation += violatedCapOfThisBin ** e2
+                totalCapViolation += violatedCapOfThisBin
 
-        objective += w2 * totalPenaltyForCapViolation
+        objective += w2 * totalCapViolation ** e2
 
-        if violationsPerType[1] > 0: ## number of bins that violated their cap
+        # term 3. violated bin capacity per bin (boolean)
+        if violationsPerType[1] > 0:
             objective += w3 * violationsPerType[1] ** e3
 
-
-
-        # todo: wat hiervan wil ik blijven gebruiken??
-        maximumViolationsOverViolationTypes = max(violationsPerType)
-
         # print(w1 * countUnassignedItems ** e1, w2 * totalPenaltyForCapViolation)
+
+        maximumViolationsOverViolationTypes = max(violationsPerType)
         return [-1 * objective, maximumViolationsOverViolationTypes, violationsPerType, self.numberOfConstraints]
 
 

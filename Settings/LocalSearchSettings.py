@@ -3,14 +3,13 @@ class LocalSearchSettings:
 
     def __init__(self):
 
-        self.simulatedAnnealing = False
-        self.variableNeighborhoodSearch = True
-        # neighborhoodrules either jointly or in isolation
-        self.jointNeighborhoodRules = False # TODO INCORPORATE
+        self.simulatedAnnealing = True
+        self.variableNeighborhoodSearch = False
 
-        self.useMove = False
-        self.useSwap = False
-        self.useMerge = False
+        # neighborhoodrules either jointly or in isolation
+        self.useMoveJoint = False
+        self.useSwapJoint = False
+        self.useMergeJoint = False
         self.useMoveIsolated = True
         self.useSwapIsolated = True
         self.useMergeIsolated = True

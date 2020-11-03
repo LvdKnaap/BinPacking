@@ -17,7 +17,6 @@ class LocalSearch2:
     startTime = 0
     solveTime = 0
 
-    # todo: wat gebruiken? welke behouden?
     maximumViolationsOverViolationTypes = 0
     violationsPerType = []
     numberOfConstraints = 0
@@ -27,7 +26,7 @@ class LocalSearch2:
 
     currentlyInVNS = False
 
-    def __init__(self,localSearchSettings):
+    def __init__(self, localSearchSettings):
         self.localSearchSettings = localSearchSettings
 
         if localSearchSettings.simulatedAnnealing:
@@ -48,6 +47,8 @@ class LocalSearch2:
         improved = True;
         while improved and not self.shouldWeTerminate():
             improved = self.performOneIteration(binPackingInstance)
+
+            # TODO: DE HUIDIGE VNS DOET GEWOON WAT STAPPEN. BEKIJK GOED DE HIP CODE.
             if not improved and self.localSearchSettings.variableNeighborhoodSearch:
                 print('in a local optimum'); print(self.curr_solution);  print('starting VNS')
                 self.currentlyInVNS = True
@@ -62,19 +63,12 @@ class LocalSearch2:
 
 
                 improved = True # is dit handig?
+
         # register the end time
         self.solveTime = round(time.time() - self.startTime, 3)
 
-        # if not improved:
-        #     print('zit ik in een LOCAL optimum?')
-        #     improved = self.performOneIteration(binPackingInstance)
-        #     if not improved:
-        #         print('ja')
-        #     else:
-        #         print('nee')
-
-
-        print('FINAL SOLUTION'); print(self.curr_solution); print(self.curr_solutionValue)
+        if binPackingInstance.binPackingSettings.printInformation:
+            print('FINAL SOLUTION'); print(self.curr_solution); print(self.curr_solutionValue)
 
 
     def performOneIteration(self, binPackingInstance):
