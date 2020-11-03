@@ -22,11 +22,9 @@ def updateScoreSingleInstance(self, solver, customSettings, binPackingSettings):
         instanceScoreSolvedInstances = 0
 
     # 2:
-    # TODO: DOMINEERT ALLE AFWIJKINGEN
     instanceScoreTime = -solver.solveTime / customSettings.timeLimit
 
     # 3:
-    # TODO: DIT IS ALTIJD VEEL TE DICHT BIJ 0
     instanceScoreViolations = -sum(solver.violationsPerType) / solver.numberOfConstraints
 
     # Normalize 2 + 3

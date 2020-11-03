@@ -3,15 +3,6 @@ import random as rd
 import time
 import math
 
-# Local search 2 tov 1
-#     stopping criteria voor tijd
-#     items kunnen ook NIET assigned zijn
-#         initial solution is alle items aan 0 bins assigned
-#         'move' kan ook een item assignen naar géén bin
-
-# TODO: HYPERPARAMETER OM NEIGHBOORHOOD RULES IN ISOLATION TE RUNNEN
-# TODO: localsearch moet extended worden door simulated annealing of variable neighboorhood
-    # of andere manier hiervoor
 
 
 class LocalSearch2:
@@ -34,6 +25,8 @@ class LocalSearch2:
     curr_solutionValue = False;
     curr_solution = 0;
 
+    currentlyInVNS = False
+
     def __init__(self,localSearchSettings):
         self.localSearchSettings = localSearchSettings
 
@@ -55,10 +48,33 @@ class LocalSearch2:
         improved = True;
         while improved and not self.shouldWeTerminate():
             improved = self.performOneIteration(binPackingInstance)
+            if not improved and self.localSearchSettings.variableNeighborhoodSearch:
+                print('in a local optimum'); print(self.curr_solution);  print('starting VNS')
+                self.currentlyInVNS = True
+                numberOfWalks = rd.randint(self.localSearchSettings.minRandomWalks,
+                                           self.localSearchSettings.maxRandomWalks)
+                print('numberOfWalks', numberOfWalks)
+                for shake in range(numberOfWalks):
+                    self.performOneIteration(binPackingInstance)
+                    print(self.curr_solution);
+
+                self.currentlyInVNS = False
+
+
+                improved = True # is dit handig?
         # register the end time
         self.solveTime = round(time.time() - self.startTime, 3)
 
-        # print('FINAL SOLUTION'); print(self.curr_solution); print(self.curr_solutionValue)
+        # if not improved:
+        #     print('zit ik in een LOCAL optimum?')
+        #     improved = self.performOneIteration(binPackingInstance)
+        #     if not improved:
+        #         print('ja')
+        #     else:
+        #         print('nee')
+
+
+        print('FINAL SOLUTION'); print(self.curr_solution); print(self.curr_solutionValue)
 
 
     def performOneIteration(self, binPackingInstance):
@@ -85,6 +101,7 @@ class LocalSearch2:
         return improvedYet
         # return self.merge(binPackingInstance, self.curr_solution) # eerst merge, dan swap, dan move
         # return False
+
 
     def randomizeNeighborhoodRules(self):
         neighboorhoodRules = []
@@ -188,11 +205,8 @@ class LocalSearch2:
 
 
     def acceptOrNot(self, binPackingInstance, new_solution):
+
         self.localSearchSettings.evaluations += 1
-
-            # todo: hier ergens VNS
-
-
 
         # decrease temperature periodically
         if self.localSearchSettings.simulatedAnnealing and self.localSearchSettings.evaluations % self.localSearchSettings.iterationsPerTemperatureReduction == 0:
@@ -207,6 +221,7 @@ class LocalSearch2:
             # print('accepted because improvement', self.curr_solutionValue)
             return True
 
+        # Simulated Annealing only
         elif self.localSearchSettings.simulatedAnnealing:
             acceptProbability = math.exp((binPackingInstance.evaluate(new_solution, self.w1, self.e1, self.w2, self.e2, self.w3, self.e3)[0] - self.curr_solutionValue)/self.localSearchSettings.temperature)
             if rd.uniform(0, 1) < acceptProbability: # accept
@@ -215,6 +230,21 @@ class LocalSearch2:
                 self.curr_solution = new_solution
                 # print('accepted by SA', self.curr_solutionValue)
                 return True
+
+        # Variable Neighborhood Search only
+        elif self.localSearchSettings.variableNeighborhoodSearch and self.currentlyInVNS:
+            # accept if reduction in evaluation of the neigbhoor is smaller than maxReduction setting
+
+            if binPackingInstance.evaluate(new_solution, self.w1, self.e1, self.w2, self.e2, self.w3, self.e3)[
+                0] + self.localSearchSettings.maxReduction > self.curr_solutionValue:  # > because maximizatione
+                [self.curr_solutionValue, self.maximumViolationsOverViolationTypes, self.violationsPerType,
+                 self.numberOfConstraints] = binPackingInstance.evaluate(
+                    new_solution, self.w1, self.e1, self.w2, self.e2, self.w3, self.e3)
+                self.curr_solution = new_solution
+                print('accepted because VNS', self.curr_solutionValue)
+                return True
+
+
         return False
 
 

@@ -14,12 +14,14 @@ class BinPackingBatchCustom:
             self.instances.append(BinPackingCustom(binPackingSettings.stepsize1*i+binPackingSettings.LB1, 1, binPackingSettings))
         for i in range(binPackingSettings.batchSizeType2):
             self.instances.append(BinPackingCustom(binPackingSettings.stepsize2*i+binPackingSettings.LB2, 2, binPackingSettings))
-        for i in range(binPackingSettings.batchSizeType2):
+        for i in range(binPackingSettings.batchSizeType3):
             self.instances.append(BinPackingCustom(binPackingSettings.stepSize3*i+binPackingSettings.LB3, 3, binPackingSettings))
         for i in range(binPackingSettings.batchSizeType4):
             self.instances.append(BinPackingCustom(binPackingSettings.stepSize4*i+binPackingSettings.LB4, 4, binPackingSettings))
         for i in range(binPackingSettings.batchSizeType5):
             self.instances.append(BinPackingCustom(binPackingSettings.stepSize5*i+binPackingSettings.LB5, 5, binPackingSettings))
+        for i in range(binPackingSettings.batchSizeType6):
+            self.instances.append(BinPackingCustom(binPackingSettings.stepSize6*i+binPackingSettings.LB6, 6, binPackingSettings))
 
 
 
@@ -99,6 +101,15 @@ class BinPackingCustom:
             for i in range(numItems):
                 self.itemWeights.append(rd.randint(1,4))
 
+
+        elif type == 6: # random instances generator
+            # type 6: N items, N bins, unieke item weights 1..N, unieke bin sizes 1..N.
+            # Dus er bestaat maaar 1 oplossing: optimale solution moet er uit zien als identity matrix
+            self.numBins = numItems
+            for i in range(self.numBins):
+                self.capacities.append(i+1)
+            for i in range(numItems):
+                self.itemWeights.append(i+1)
         else:
             print('undefined type')
 
