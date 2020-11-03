@@ -29,6 +29,7 @@ class BinPackingCustom:
     numItems = 0;
     capacities = [];
     itemWeights = []
+    numberOfConstraints = -1
 
 
     def __init__(self, numItems, type, binPackingSettings):
@@ -104,6 +105,8 @@ class BinPackingCustom:
         assert len(self.capacities) == self.numBins
         assert len(self.itemWeights) == self.numItems
 
+        self.findNumberOfConstraints()
+
 
         if binPackingSettings.printInformation:
             print(self.numBins, 'bins', self.numItems, 'items')
@@ -167,8 +170,19 @@ class BinPackingCustom:
 
 
 
-
+        # todo: wat hiervan wil ik blijven gebruiken??
         maximumViolationsOverViolationTypes = max(violationsPerType)
 
         # print(w1 * countUnassignedItems ** e1, w2 * totalPenaltyForCapViolation)
-        return [-1 * objective, maximumViolationsOverViolationTypes]
+        return [-1 * objective, maximumViolationsOverViolationTypes, violationsPerType, self.numberOfConstraints]
+
+
+    def findNumberOfConstraints(self):
+        self.numberOfConstraints = 0
+        # The goal is to find the number of constraints that can be violated in 'violationsPerType'
+        # number of unassigned items
+        self.numberOfConstraints += self.numItems
+
+        # maximum violated bin capacity
+            # if all items in the smallest bin
+        self.numberOfConstraints += sum(self.itemWeights) - min(self.capacities)

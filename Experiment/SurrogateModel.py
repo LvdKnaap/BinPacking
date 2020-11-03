@@ -14,34 +14,57 @@ class SurrogateModel:
 
 
 def updateScoreSingleInstance(self, solver, customSettings, binPackingSettings):
-    # TODO METRIC NAAR EEN LOSSE METHOD ZODAT DIE VANUIT BO EN HYPEROPT LOS AANGEROEPEN KAN WORDEN
-    # THE CURRENT METRIC IS:
-    #     1) the number of solved instances +
-    #     2) avg seconds below time limit per instance * weight -
 
-    # TODO: is een test. is dit logischer dan som over violations en is het correct geimplementeerd?
-    #     3) maximum (over all violation types) violations of a type  * weight
-    # todo: RETURNT IN IEDER GEVAL TE HOGE PENALTIES!!!!
-    # first term most important, 2nd and 3rd to get some differences
-    # important to note: all feasible solutions have violations = 0 (so no deduction in term 3)
-    #     while all non-feasible solutions have solve time equals time limit (so no deduction in term 2)
-
+    # 1: solved instance / batchSize
     if solver.curr_solutionValue == 0:
-        self.totalScoreSolvedInstances += customSettings.weightSolvedInstances * 1
-    # TODO:  " while all non-feasible solutions have solve time equals time limit (so no deduction in term 2)"
-    # dit is niet waar. Als we in een local optimum zitten die non-feasible is, kan de oplossing returnen binnen time limit.
-    self.totalScoreTime += customSettings.weightTime * max(0,
-                                                           customSettings.timeLimit - solver.solveTime) / binPackingSettings.batchSize
-    self.totalScoreViolations += customSettings.weightViolations * solver.maximumViolationsOverViolationTypes / binPackingSettings.batchSize
+        instanceScoreSolvedInstances = 1
+    else:
+        instanceScoreSolvedInstances = 0
+
+    # 2:
+    # TODO: DOMINEERT ALLE AFWIJKINGEN
+    instanceScoreTime = -solver.solveTime / customSettings.timeLimit
+
+    # 3:
+    # TODO: DIT IS ALTIJD VEEL TE DICHT BIJ 0
+    instanceScoreViolations = -sum(solver.violationsPerType) / solver.numberOfConstraints
+
+    # Normalize 2 + 3
+    instanceScoreTime /= 2 * binPackingSettings.batchSize
+    instanceScoreViolations /= 2 * binPackingSettings.batchSize
+
+    # Normalize all scores over batch size
+    instanceScoreSolvedInstances /= binPackingSettings.batchSize
+    instanceScoreTime /= binPackingSettings.batchSize
+    instanceScoreViolations /= binPackingSettings.batchSize
+
+    # Update the score components
+    self.totalScoreSolvedInstances += instanceScoreSolvedInstances
+    self.totalScoreTime += instanceScoreTime
+    self.totalScoreViolations += instanceScoreViolations
 
 def updateScoreBatch(self, surrogateModelSettings, customSettings, localsAtStart):
-    # TODO: test met regularizationFactor. Minnetjes en plusjes in 1 functie moet consistent worden
+    # calculate the maximum penalty (in case all parameters attain their most extreme value)
+    maximumPenaltyRegularization = 0
+    penaltyRegularizationForThisParameterConfiguration = 0
+    for key in surrogateModelSettings.pbounds_bo: # loop over all variables
+        # take their most extreme bound: the maximum value of the absolute values of the lower and the upper bound
+        #   or: max(abs(lb), abs(ub))
+        # and raise it to the exponent of the regularization factor
+        maximumPenaltyRegularization += max(abs(surrogateModelSettings.pbounds_bo[key][0]), abs(surrogateModelSettings.pbounds_bo[key][1])) ** customSettings.regularizationFactorExponent
+
+
     for i in range(len(surrogateModelSettings.pbounds_bo)):
-        self.totalScoreRegularizationFactor += customSettings.regularizationFactor * localsAtStart[i][1] ** customSettings.regularizationFactorExponent
+        penaltyRegularizationForThisParameterConfiguration += localsAtStart[i][1] ** customSettings.regularizationFactorExponent
+
+    # normalize over maximum penalty:
+    penaltyRegularizationForThisParameterConfiguration /= maximumPenaltyRegularization
+
+    self.totalScoreRegularizationFactor -= customSettings.regularizationFactor * penaltyRegularizationForThisParameterConfiguration
 
 
 def printInfo(self):
-    print(self.totalScoreSolvedInstances, round(self.totalScoreTime, 2), round(self.totalScoreViolations, 2),
+    print(round(self.totalScoreSolvedInstances, 2), round(self.totalScoreTime, 2), round(self.totalScoreViolations, 2),
           round(self.totalScoreRegularizationFactor, 2))
 
     print(round(self.totalScoreSolvedInstances + self.totalScoreTime + self.totalScoreViolations + self.totalScoreRegularizationFactor,2))

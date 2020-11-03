@@ -25,7 +25,11 @@ class LocalSearch2:
     timeLimit = 0
     startTime = 0
     solveTime = 0
+
+    # todo: wat gebruiken? welke behouden?
     maximumViolationsOverViolationTypes = 0
+    violationsPerType = []
+    numberOfConstraints = 0
 
     curr_solutionValue = False;
     curr_solution = 0;
@@ -44,7 +48,7 @@ class LocalSearch2:
 
     def solve(self, binPackingInstance, timeLimit):
         self.curr_solution = self.createInitialSolution(binPackingInstance)
-        [self.curr_solutionValue, self.maximumViolationsOverViolationTypes] = binPackingInstance.evaluate(self.curr_solution, self.w1, self.e1, self.w2, self.e2, self.w3, self.e3)
+        [self.curr_solutionValue, self.maximumViolationsOverViolationTypes, self.violationsPerType, self.numberOfConstraints] = binPackingInstance.evaluate(self.curr_solution, self.w1, self.e1, self.w2, self.e2, self.w3, self.e3)
         self.timeLimit = timeLimit
         self.startTime = time.time()
 
@@ -197,7 +201,7 @@ class LocalSearch2:
 
         # always accept improvements:
         if binPackingInstance.evaluate(new_solution, self.w1, self.e1, self.w2, self.e2, self.w3, self.e3)[0] > self.curr_solutionValue:  # > because maximizatione
-            [self.curr_solutionValue, self.maximumViolationsOverViolationTypes] = binPackingInstance.evaluate(
+            [self.curr_solutionValue, self.maximumViolationsOverViolationTypes, self.violationsPerType, self.numberOfConstraints] = binPackingInstance.evaluate(
                 new_solution, self.w1, self.e1, self.w2, self.e2, self.w3, self.e3)
             self.curr_solution = new_solution
             # print('accepted because improvement', self.curr_solutionValue)
@@ -206,7 +210,7 @@ class LocalSearch2:
         elif self.localSearchSettings.simulatedAnnealing:
             acceptProbability = math.exp((binPackingInstance.evaluate(new_solution, self.w1, self.e1, self.w2, self.e2, self.w3, self.e3)[0] - self.curr_solutionValue)/self.localSearchSettings.temperature)
             if rd.uniform(0, 1) < acceptProbability: # accept
-                [self.curr_solutionValue, self.maximumViolationsOverViolationTypes] = binPackingInstance.evaluate(
+                [self.curr_solutionValue, self.maximumViolationsOverViolationTypes, self.violationsPerType, self.numberOfConstraints] = binPackingInstance.evaluate(
                     new_solution, self.w1, self.e1, self.w2, self.e2, self.w3, self.e3)
                 self.curr_solution = new_solution
                 # print('accepted by SA', self.curr_solutionValue)
