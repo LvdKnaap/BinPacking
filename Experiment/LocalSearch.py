@@ -60,24 +60,24 @@ class LocalSearch2:
     def performOneIteration(self, binPackingInstance):
         neighboorhoodRules = self.randomizeNeighborhoodRules()
         improvedYet = False
-        print(); print();
-        print('before iteration:'); print(self.curr_solution)
-        print('volgorde rules: ', neighboorhoodRules)
+        # print(); print();
+        # print('before iteration:'); print(self.curr_solution)
+        # print('volgorde rules: ', neighboorhoodRules)
         for neighboorhoodRule in neighboorhoodRules:
             if improvedYet:
                 continue
             if not improvedYet and neighboorhoodRule == 'moveIso':
                 improvedYet = self.moveIso(binPackingInstance)
-                if improvedYet:
-                    print('MOVED:'); print(self.curr_solution)
+                # if improvedYet:
+                #     print('MOVED:'); print(self.curr_solution)
             if not improvedYet and neighboorhoodRule == 'swapIso':
                 improvedYet = self.swapIso(binPackingInstance)
-                if improvedYet:
-                    print('SWAPPED'); print(self.curr_solution)
+                # if improvedYet:
+                #     print('SWAPPED'); print(self.curr_solution)
             if not improvedYet and neighboorhoodRule == 'mergeIso':
                 improvedYet = self.mergeIso(binPackingInstance)
-                if improvedYet:
-                    print('MERGED'); print(self.curr_solution)
+                # if improvedYet:
+                #     print('MERGED'); print(self.curr_solution)
         return improvedYet
         # return self.merge(binPackingInstance, self.curr_solution) # eerst merge, dan swap, dan move
         # return False
@@ -94,7 +94,6 @@ class LocalSearch2:
         return neighboorhoodRules
 
     def moveIso(self, binPackingInstance):
-        self.localSearchSettings.evaluations += 1 # TODO: MOET DIT HIER? KIJK OF ALLE .EVALUATIONS GOED WERRKEN
         if self.shouldWeTerminate():
             return False
 
@@ -118,7 +117,6 @@ class LocalSearch2:
         return False
 
     def swapIso(self, binPackingInstance):
-        self.localSearchSettings.evaluations += 1  # TODO: MOET DIT HIER? KIJK OF ALLE .EVALUATIONS GOED WERRKEN
         if self.shouldWeTerminate():
             return False
 
@@ -160,7 +158,6 @@ class LocalSearch2:
         return False
 
     def mergeIso(self, binPackingInstance):
-        self.localSearchSettings.evaluations += 1  # TODO: MOET DIT HIER? KIJK OF ALLE .EVALUATIONS GOED WERRKEN
         if self.shouldWeTerminate():
             return False
 
@@ -170,6 +167,8 @@ class LocalSearch2:
 
         for bin1 in binOrder1:
             for bin2 in binOrder2:
+                if bin1 == bin2:
+                    continue
                 # // create new solution and put all items from bin2 in bin1
                 new_solution = np.copy(self.curr_solution)
                 for i in range(binPackingInstance.numItems):
@@ -185,17 +184,23 @@ class LocalSearch2:
 
 
     def acceptOrNot(self, binPackingInstance, new_solution):
+        self.localSearchSettings.evaluations += 1
+
             # todo: hier ergens VNS
+
+
+
         # decrease temperature periodically
         if self.localSearchSettings.simulatedAnnealing and self.localSearchSettings.evaluations % self.localSearchSettings.iterationsPerTemperatureReduction == 0:
             self.localSearchSettings.temperature = self.localSearchSettings.temperatureReductionFactor * self.localSearchSettings.temperature;
+
 
         # always accept improvements:
         if binPackingInstance.evaluate(new_solution, self.w1, self.e1, self.w2, self.e2, self.w3, self.e3)[0] > self.curr_solutionValue:  # > because maximizatione
             [self.curr_solutionValue, self.maximumViolationsOverViolationTypes] = binPackingInstance.evaluate(
                 new_solution, self.w1, self.e1, self.w2, self.e2, self.w3, self.e3)
             self.curr_solution = new_solution
-            print('accepted because improvement', self.curr_solutionValue)
+            # print('accepted because improvement', self.curr_solutionValue)
             return True
 
         elif self.localSearchSettings.simulatedAnnealing:
@@ -204,7 +209,7 @@ class LocalSearch2:
                 [self.curr_solutionValue, self.maximumViolationsOverViolationTypes] = binPackingInstance.evaluate(
                     new_solution, self.w1, self.e1, self.w2, self.e2, self.w3, self.e3)
                 self.curr_solution = new_solution
-                print('accepted by SA', self.curr_solutionValue)
+                # print('accepted by SA', self.curr_solutionValue)
                 return True
         return False
 
@@ -378,8 +383,6 @@ class LocalSearch2:
         return False
 
     def move(self, binPackingInstance, input_solution):
-        self.localSearchSettings.evaluations += 1
-
         if self.shouldWeTerminate():
             return False
 

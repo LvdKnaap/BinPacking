@@ -8,25 +8,18 @@ class BinPackingBatchCustom:
 
     def __init__(self, binPackingSettings):
         # (some sort of) lower bounds on instance sizes
-        LB1 = 3 # (multiplied by 2)
-        LB2 = 2 # (multiplied by 5)
-        LB3 = 50
-        stepSize3 = 10
-        LB4 = 20
-        stepSize4 = 2
-        LB5 = 10
-        stepSize5 = 1
+
         self.instances = []
         for i in range(binPackingSettings.batchSizeType1):
-            self.instances.append(BinPackingCustom(2*(i+LB1), 1)) # i+3 zorgt voor lower bound, kleine instances zijn té makkelijk
+            self.instances.append(BinPackingCustom(binPackingSettings.stepsize1*i+binPackingSettings.LB1, 1, binPackingSettings))
         for i in range(binPackingSettings.batchSizeType2):
-            self.instances.append(BinPackingCustom(5*(i+LB2), 2)) # i+3 zorgt voor lower bound, kleine instances zijn té makkelijk
+            self.instances.append(BinPackingCustom(binPackingSettings.stepsize2*i+binPackingSettings.LB2, 2, binPackingSettings))
         for i in range(binPackingSettings.batchSizeType2):
-            self.instances.append(BinPackingCustom(stepSize3*i+LB3, 3))
+            self.instances.append(BinPackingCustom(binPackingSettings.stepSize3*i+binPackingSettings.LB3, 3, binPackingSettings))
         for i in range(binPackingSettings.batchSizeType4):
-            self.instances.append(BinPackingCustom(stepSize4*i+LB4, 4))
+            self.instances.append(BinPackingCustom(binPackingSettings.stepSize4*i+binPackingSettings.LB4, 4, binPackingSettings))
         for i in range(binPackingSettings.batchSizeType5):
-            self.instances.append(BinPackingCustom(stepSize5*i+LB5, 5))
+            self.instances.append(BinPackingCustom(binPackingSettings.stepSize5*i+binPackingSettings.LB5, 5, binPackingSettings))
 
 
 
@@ -38,7 +31,7 @@ class BinPackingCustom:
     itemWeights = []
 
 
-    def __init__(self, numItems, type):
+    def __init__(self, numItems, type, binPackingSettings):
         self.numItems = numItems;
         self.itemWeights = []
 
@@ -97,6 +90,12 @@ class BinPackingCustom:
 
         else:
             print('undefined type')
+
+        if binPackingSettings.printInformation:
+            print(self.numBins, 'bins', self.numItems, 'items')
+            print('item weights: ', self.itemWeights)
+            print('bin sizes: ', self.capacity)
+            print()
 
 
 
