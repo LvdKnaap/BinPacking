@@ -5,8 +5,8 @@ class BinPackingSettings:
         ##### BIN PACKING SETTINGS
         self.batchSizeType1 = 1
         self.batchSizeType2 = 1
-        self.batchSizeType3 = 0
-        self.batchSizeType4 = 0
-        self.batchSizeType5 = 0
+        self.batchSizeType3 = 1
+        self.batchSizeType4 = 1
+        self.batchSizeType5 = 1
         self.batchSize = self.batchSizeType1 + self.batchSizeType2 + self.batchSizeType3 + self.batchSizeType4 + self.batchSizeType5
         ##########################

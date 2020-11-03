@@ -9,7 +9,7 @@ class SurrogateModelSettings:
 
         #todo: een manier om input bounds automatisch goed te transformeren zodat de input goed is voor bo en hyperopt
         # if these are not included in th search space (ie 'bounds' or 'space') => use these values as fixed par.
-        self.fixedParameters = {'w1': 1,
+        self.fixedParameters = {'w1': 10,
                                 'w2': 1,
                                 'w3': 1,
                                 'e1': 1,
