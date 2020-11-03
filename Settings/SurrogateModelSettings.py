@@ -7,7 +7,16 @@ class SurrogateModelSettings:
         self.BO = True
         self.hyperOpt = True
 
-        #todo: een manier om input bounds automatisch goed te transformeren zodat de input goed is voor bo en hyperopt
+        self.searchSpace_dict = {'w1': (-10, 10),
+                                 'w2': (1, 5),
+                                 'w3': (-1, 3),
+                                 'e1': (-5, 5),
+                                 'e2': (-5, 5),
+                                 'e3': (-5, 5),
+                                 }
+
+
+
         # if these are not included in th search space (ie 'bounds' or 'space') => use these values as fixed par.
         self.fixedParameters = {'w1': 10,
                                 'w2': 1,
@@ -16,11 +25,20 @@ class SurrogateModelSettings:
                                 'e2': 1,
                                 'e3': 1}
 
-        self.pbounds_bo = {'w1': (-10, 10), 'w3': (-1, 3)} # voor bo
-        self.space_ho = { # voor hyperopt
-            'w1': hyperopt.hp.uniform('w1', -10, 10),
-            'w3': hyperopt.hp.uniform('w3', 1, 3),
-        }
+
+
+        self.pbounds_bo = self.searchSpace_dict # voor bo
+        self.space_ho = {}
+        for dimension in self.searchSpace_dict:
+            self.space_ho[dimension] = hyperopt.hp.uniform(dimension, self.searchSpace_dict[dimension][0], self.searchSpace_dict[dimension][1])
+
+        # BACKUP
+        # self.space_ho = { # voor hyperopt
+        #     'w1': hyperopt.hp.uniform('w1', -10, 10),
+        #     'w3': hyperopt.hp.uniform('w3', 1, 3),
+        # }
+
+
 
         # BAYESIAN OPTIMISATION SETTINGS
         self.printInformation_bo = True
@@ -34,5 +52,5 @@ class SurrogateModelSettings:
         # HYPEROPT SETTINGS
         self.printInformation_ho = True
         self.algo_ho = 'hyperopt.tpe.suggest'
-        self.max_evals_ho = 5
-        # TODO HYPEROPT MOET OOK EEN RANDOMSTATE OID, een seed
+        self.max_evals_ho = 1
+        # TODO: HYPEROPT MOET OOK EEN RANDOMSTATE OID, een seed

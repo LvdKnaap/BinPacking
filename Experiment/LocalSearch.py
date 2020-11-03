@@ -40,7 +40,9 @@ class LocalSearch2:
 
     def solve(self, binPackingInstance, timeLimit):
         self.curr_solution = self.createInitialSolution(binPackingInstance)
-        [self.curr_solutionValue, self.maximumViolationsOverViolationTypes, self.violationsPerType, self.numberOfConstraints] = binPackingInstance.evaluate(self.curr_solution, self.w1, self.e1, self.w2, self.e2, self.w3, self.e3)
+        # [self.curr_solutionValue, self.maximumViolationsOverViolationTypes, self.violationsPerType, self.numberOfConstraints] = binPackingInstance.evaluate(self.curr_solution, self.w1, self.e1, self.w2, self.e2, self.w3, self.e3)
+        [self.curr_solutionValue, self.maximumViolationsOverViolationTypes, self.violationsPerType, self.numberOfConstraints] = binPackingInstance.evaluate(self.curr_solution, self)
+
         self.timeLimit = timeLimit
         self.startTime = time.time()
 
@@ -198,6 +200,7 @@ class LocalSearch2:
         return False
 
 
+
     def acceptOrNot(self, binPackingInstance, new_solution):
 
         self.localSearchSettings.evaluations += 1
@@ -208,19 +211,25 @@ class LocalSearch2:
 
 
         # always accept improvements:
-        if binPackingInstance.evaluate(new_solution, self.w1, self.e1, self.w2, self.e2, self.w3, self.e3)[0] > self.curr_solutionValue:  # > because maximizatione
-            [self.curr_solutionValue, self.maximumViolationsOverViolationTypes, self.violationsPerType, self.numberOfConstraints] = binPackingInstance.evaluate(
-                new_solution, self.w1, self.e1, self.w2, self.e2, self.w3, self.e3)
+        # if binPackingInstance.evaluate(new_solution, self.w1, self.e1, self.w2, self.e2, self.w3, self.e3)[0] > self.curr_solutionValue:  # > because maximizatione:
+        if binPackingInstance.evaluate(new_solution, self)[0] > self.curr_solutionValue:  # > because maximizatione
+
+
+            # [self.curr_solutionValue, self.maximumViolationsOverViolationTypes, self.violationsPerType, self.numberOfConstraints] = binPackingInstance.evaluate(
+            #     new_solution, self.w1, self.e1, self.w2, self.e2, self.w3, self.e3)
+            [self.curr_solutionValue, self.maximumViolationsOverViolationTypes, self.violationsPerType, self.numberOfConstraints] = binPackingInstance.evaluate(new_solution, self)
             self.curr_solution = new_solution
             # print('accepted because improvement', self.curr_solutionValue)
             return True
 
         # Simulated Annealing only
         elif self.localSearchSettings.simulatedAnnealing:
-            acceptProbability = math.exp((binPackingInstance.evaluate(new_solution, self.w1, self.e1, self.w2, self.e2, self.w3, self.e3)[0] - self.curr_solutionValue)/self.localSearchSettings.temperature)
+            # acceptProbability = math.exp((binPackingInstance.evaluate(new_solution, self.w1, self.e1, self.w2, self.e2, self.w3, self.e3)[0] - self.curr_solutionValue)/self.localSearchSettings.temperature)
+            acceptProbability = math.exp((binPackingInstance.evaluate(new_solution, self)[0] - self.curr_solutionValue)/self.localSearchSettings.temperature)
             if rd.uniform(0, 1) < acceptProbability: # accept
-                [self.curr_solutionValue, self.maximumViolationsOverViolationTypes, self.violationsPerType, self.numberOfConstraints] = binPackingInstance.evaluate(
-                    new_solution, self.w1, self.e1, self.w2, self.e2, self.w3, self.e3)
+                [self.curr_solutionValue, self.maximumViolationsOverViolationTypes, self.violationsPerType, self.numberOfConstraints] = binPackingInstance.evaluate(new_solution, self)
+            #     [self.curr_solutionValue, self.maximumViolationsOverViolationTypes, self.violationsPerType, self.numberOfConstraints] = binPackingInstance.evaluate(
+            #         new_solution, self.w1, self.e1, self.w2, self.e2, self.w3, self.e3)
                 self.curr_solution = new_solution
                 # print('accepted by SA', self.curr_solutionValue)
                 return True
@@ -229,11 +238,12 @@ class LocalSearch2:
         elif self.localSearchSettings.variableNeighborhoodSearch and self.currentlyInVNS:
             # accept if reduction in evaluation of the neigbhoor is smaller than maxReduction setting
 
-            if binPackingInstance.evaluate(new_solution, self.w1, self.e1, self.w2, self.e2, self.w3, self.e3)[
+            # if binPackingInstance.evaluate(new_solution, self.w1, self.e1, self.w2, self.e2, self.w3, self.e3)[
+            if binPackingInstance.evaluate(new_solution, self)[
                 0] + self.localSearchSettings.maxReduction > self.curr_solutionValue:  # > because maximizatione
                 [self.curr_solutionValue, self.maximumViolationsOverViolationTypes, self.violationsPerType,
-                 self.numberOfConstraints] = binPackingInstance.evaluate(
-                    new_solution, self.w1, self.e1, self.w2, self.e2, self.w3, self.e3)
+                 self.numberOfConstraints] = binPackingInstance.evaluate(new_solution, self)
+                    # new_solution, self.w1, self.e1, self.w2, self.e2, self.w3, self.e3)
                 self.curr_solution = new_solution
                 print('accepted because VNS', self.curr_solutionValue)
                 return True

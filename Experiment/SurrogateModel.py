@@ -63,10 +63,10 @@ def updateScoreBatch(self, surrogateModelSettings, customSettings, localsAtStart
 
 
 def printInfo(self):
-    print(round(self.totalScoreSolvedInstances, 2), round(self.totalScoreTime, 2), round(self.totalScoreViolations, 2),
-          round(self.totalScoreRegularizationFactor, 2))
+    print(['tot:', round(self.totalScoreSolvedInstances + self.totalScoreTime + self.totalScoreViolations + self.totalScoreRegularizationFactor,2),
+           '   per category: ', round(self.totalScoreSolvedInstances, 2), round(self.totalScoreTime, 2), round(self.totalScoreViolations, 2),
+          round(self.totalScoreRegularizationFactor, 2)])
 
-    print(round(self.totalScoreSolvedInstances + self.totalScoreTime + self.totalScoreViolations + self.totalScoreRegularizationFactor,2))
 
 
 
@@ -93,10 +93,11 @@ class BayesianSurrogateModel(SurrogateModel):
         self.binPackingSettings = binPackingSettings
 
 
+        # TODO: HOE KAN IK HIER DE INPUT PARAMETERS ONAFHANKELIJK MAKEN? ZOALS 'params' by hyperopt
         def black_box_function(w1, w3):
             localsAtStart = list(locals().items())[:len(surrogateModelSettings.pbounds_bo)]
             localsAtStart_dict = locals()
-            print(); print('attempting: ', localsAtStart)
+            print('attempting: ', localsAtStart)
 
             # Create the bin packing problem instances
             binpackingBatch = BinPackingBatchCustom(binPackingSettings)
@@ -164,25 +165,33 @@ class HyperoptSurrogateModel(SurrogateModel):
 
 
         def objective(params):
+            attemptingPrint = []
             if 'w1' in params:
                 w1 = params['w1']
+                attemptingPrint.append(round(w1, 2))
             if 'e1' in params:
                 e1 = params['e1']
+                attemptingPrint.append(round(e1, 2))
             if 'w2' in params:
                 w2 = params['w2']
+                attemptingPrint.append(round(w2, 2))
             if 'e2' in params:
                 e2 = params['e2']
+                attemptingPrint.append(round(e2, 2))
             if 'w3' in params:
                 w3 = params['w3']
+                attemptingPrint.append(round(w3, 2))
             if 'e3' in params:
                 e3 = params['e3']
+                attemptingPrint.append(round(e3, 2))
 
-            print('attempting: ', [round(w1,2), round(w3,2)])
+            print('attempting: ', attemptingPrint)
 
             binpackingBatch = BinPackingBatchCustom(binPackingSettings)
 
             # Create the local search solver
             solver = LocalSearch2(localSearchSettings)
+
             # Read all initial weights (the variable weights that are arguments to this function will be overwritten later
             solver.setInitialWeights(surrogateModelSettings)
             # Overwrite initial weights with variable weights

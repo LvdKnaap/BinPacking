@@ -123,7 +123,8 @@ class BinPackingCustom:
 
 
 
-    def evaluate(self, allocation, w1, e1, w2, e2, w3, e3):
+    # def evaluate(self, allocation, w1, e1, w2, e2, w3, e3):
+    def evaluate(self, allocation, solver):
         # allocations heeft items op rijen, bins op kolommen
         violationsPerType = []
         objective = 0
@@ -144,7 +145,8 @@ class BinPackingCustom:
                 countUnassignedItems += 1
                 violationsPerType[0] += 1
 
-        objective += w1 * countUnassignedItems ** e1
+        if countUnassignedItems > 0: # this conditional is only to avoid raising 0 to a negative power
+            objective += solver.w1 * countUnassignedItems ** solver.e1
 
 
         # term 2. violated bin capacity per bin (amount / integer)
@@ -163,11 +165,12 @@ class BinPackingCustom:
             if violatedCapOfThisBin > 0:
                 totalCapViolation += violatedCapOfThisBin
 
-        objective += w2 * totalCapViolation ** e2
+        if totalCapViolation > 0: # this conditional is only to avoid raising 0 to a negative power
+            objective += solver.w2 * totalCapViolation ** solver.e2
 
         # term 3. violated bin capacity per bin (boolean)
-        if violationsPerType[1] > 0:
-            objective += w3 * violationsPerType[1] ** e3
+        if violationsPerType[1] > 0: # this conditional is only to avoid raising 0 to a negative power
+            objective += solver.w3 * violationsPerType[1] ** solver.e3
 
         # print(w1 * countUnassignedItems ** e1, w2 * totalPenaltyForCapViolation)
 
