@@ -54,7 +54,7 @@ class LocalSearch2:
         # register the end time
         self.solveTime = round(time.time() - self.startTime, 3)
 
-        print('FINAL SOLUTION'); print(self.curr_solution); print(self.curr_solutionValue)
+        # print('FINAL SOLUTION'); print(self.curr_solution); print(self.curr_solutionValue)
 
 
     def performOneIteration(self, binPackingInstance):

@@ -3,8 +3,8 @@ class BinPackingSettings:
 
     def __init__(self):
         ##### BIN PACKING SETTINGS
-        self.printInformation = True
-        self.batchSizeType1 = 2
+        self.printInformation = False
+        self.batchSizeType1 = 10
         self.batchSizeType2 = 0
         self.batchSizeType3 = 0
         self.batchSizeType4 = 0
@@ -13,7 +13,7 @@ class BinPackingSettings:
 
         self.LB1 = 6
         self.stepsize1 = 2
-        self.LB2 = 2
+        self.LB2 = 5
         self.stepsize2 = 5
         self.LB3 = 50
         self.stepSize3 = 10

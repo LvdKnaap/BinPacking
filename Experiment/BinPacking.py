@@ -27,17 +27,21 @@ class BinPackingCustom:
 
     numBins = 0;
     numItems = 0;
-    capacity = 0;
+    capacities = [];
     itemWeights = []
 
 
     def __init__(self, numItems, type, binPackingSettings):
         self.numItems = numItems;
         self.itemWeights = []
+        self.capacities = []
 
         if type == 1: # standaard counter example voor greedy algorithms
-            self.capacity = 10;
+
             self.numBins = int(numItems/2);
+            for i in range(self.numBins):
+                self.capacities.append(10)
+
             if numItems % 2 == 1:
                 print('aantal items is oneven. Onverwacht.')
             for i in range(numItems):
@@ -47,8 +51,11 @@ class BinPackingCustom:
                     self.itemWeights.append(6)
 
         elif type == 2: # partitioning problem met 2 bins en 5 items: {3, 7}^n; {2, 4, 4}^n, n = items/5
-            self.capacity = 10*int(numItems/5);
             self.numBins = 2
+
+            for i in range(self.numBins):
+                self.capacities.append(10*int(numItems/5))
+
             if numItems % 5 != 0:
                 print('aantal items is geen meervoud van 5. Onverwacht.')
             for i in range(int(numItems/5)):
@@ -60,18 +67,22 @@ class BinPackingCustom:
 
         elif type == 3: # 1 type is heel groot (even groot als bin). HOPELIJK is het in veel tussentijdse oplossingen
             #         handig om dat grote item aan geen bin toe te wijzen
-            self.capacity = numItems-1
             self.numBins = 2
 
-            self.itemWeights.append(self.capacity)
+            for i in range(self.numBins):
+                self.capacities.append(numItems-1)
+
+            self.itemWeights.append(self.capacities[0])
             for i in range(numItems-1):
                 self.itemWeights.append(1)
 
         elif type == 4: #
-            self.capacity = 10
             self.numBins = int(numItems/2)
 
-            self.itemWeights.append(self.capacity)
+            for i in range(self.numBins):
+                self.capacities.append(10)
+
+            self.itemWeights.append(self.capacities[0])
             for i in range(numItems - 1):
                 self.itemWeights.append(1)
 
@@ -79,22 +90,25 @@ class BinPackingCustom:
             # TODO: moet beter (iig moet het werken voor step size 1)
             # momenteel: items krijgen unifrom int weight [1,4]. (dus average weight = 2.5)
                 # bins = aantal items / 2 + 1 dus hopelijk voldoende ruimte
+            self.numBins = int(numItems / 2) + 1
 
             rd.seed(13) # for consisntency
-            self.numBins = int(numItems/2) + 1
-            self.capacity = 10
+            for i in range(self.numBins):
+                self.capacities.append(10)
             for i in range(numItems):
                 self.itemWeights.append(rd.randint(1,4))
-
-
 
         else:
             print('undefined type')
 
+        assert len(self.capacities) == self.numBins
+        assert len(self.itemWeights) == self.numItems
+
+
         if binPackingSettings.printInformation:
             print(self.numBins, 'bins', self.numItems, 'items')
             print('item weights: ', self.itemWeights)
-            print('bin sizes: ', self.capacity)
+            print('bin sizes: ', self.capacities)
             print()
 
 
@@ -134,7 +148,8 @@ class BinPackingCustom:
         # ik doe nu de eerste
         totalPenaltyForCapViolation = 0
         for j in range(self.numBins):
-            violatedCapOfThisBin = -self.capacity
+            # violatedCapOfThisBin = -self.capacity
+            violatedCapOfThisBin = -self.capacities[j]
             for i in range(self.numItems):
                 if allocation[i][j]:
                     violatedCapOfThisBin += self.itemWeights[i]
