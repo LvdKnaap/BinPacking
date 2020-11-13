@@ -8,6 +8,8 @@ import math
 class LocalSearch2:
     # // weight parameters
     w1, e1, w2, e2, w3, e3 = -1, -1, -1, -1, -1, -1
+    temperatureReductionFactor = -1; # nog in test
+
     localSearchSettings = ""
     localSearchtype = ""
 
@@ -202,8 +204,13 @@ class LocalSearch2:
         self.localSearchSettings.evaluations += 1
 
         # decrease temperature periodically
+        # if self.localSearchSettings.simulatedAnnealing and self.localSearchSettings.evaluations % self.localSearchSettings.iterationsPerTemperatureReduction == 0:
+        #     self.localSearchSettings.temperature = self.localSearchSettings.temperatureReductionFactor * self.localSearchSettings.temperature;
+
+        # test met reduction als variable ding
         if self.localSearchSettings.simulatedAnnealing and self.localSearchSettings.evaluations % self.localSearchSettings.iterationsPerTemperatureReduction == 0:
-            self.localSearchSettings.temperature = self.localSearchSettings.temperatureReductionFactor * self.localSearchSettings.temperature;
+            self.localSearchSettings.temperature = self.temperatureReductionFactor * self.localSearchSettings.temperature;
+
 
 
         # always accept improvements:
@@ -267,13 +274,14 @@ class LocalSearch2:
         return False
 
     # Set all weights to specified in settings. They will be overwritten by setVariableWeights
-    def setInitialWeights(self, surrogateModelSettings):
-        self.w1 = surrogateModelSettings.fixedParameters['w1']
-        self.e1 = surrogateModelSettings.fixedParameters['e1']
-        self.w2 = surrogateModelSettings.fixedParameters['w2']
-        self.e2 = surrogateModelSettings.fixedParameters['e2']
-        self.w3 = surrogateModelSettings.fixedParameters['w3']
-        self.e3 = surrogateModelSettings.fixedParameters['e3']
+    def setInitialWeights(self, localSearchSettings):
+        self.w1 = localSearchSettings.fixedParameters['w1']
+        self.e1 = localSearchSettings.fixedParameters['e1']
+        self.w2 = localSearchSettings.fixedParameters['w2']
+        self.e2 = localSearchSettings.fixedParameters['e2']
+        self.w3 = localSearchSettings.fixedParameters['w3']
+        self.e3 = localSearchSettings.fixedParameters['e3']
+        self.temperatureReductionFactor = localSearchSettings.fixedParameters['temperatureReductionFactor']
 
     # Only overwrite variable weights
     def setVariableWeights(self, localsAtStart_dict):
@@ -289,7 +297,8 @@ class LocalSearch2:
             self.w3 = localsAtStart_dict['w3']
         if 'e3' in localsAtStart_dict:
             self.e3 = localsAtStart_dict['e3']
-
+        if 'temperatureReductionFactor' in localsAtStart_dict:
+            self.temperatureReductionFactor = localsAtStart_dict['temperatureReductionFactor']
 
 
 

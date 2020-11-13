@@ -108,7 +108,7 @@ class BayesianSurrogateModel(SurrogateModel):
             # Create the local search solver
             solver = LocalSearch2(localSearchSettings)
             # Read all initial weights (the variable weights that are arguments to this function will be overwritten later
-            solver.setInitialWeights(surrogateModelSettings)
+            solver.setInitialWeights(localSearchSettings)
             # Overwrite initial weights with variable weights
             solver.setVariableWeights(localsAtStart_dict)
 
@@ -198,7 +198,7 @@ class HyperoptSurrogateModel(SurrogateModel):
             solver = LocalSearch2(localSearchSettings)
 
             # Read all initial weights (the variable weights that are arguments to this function will be overwritten later
-            solver.setInitialWeights(surrogateModelSettings)
+            solver.setInitialWeights(localSearchSettings)
             # Overwrite initial weights with variable weights
             solver.setVariableWeights(params)
 

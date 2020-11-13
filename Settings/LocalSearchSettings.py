@@ -4,7 +4,7 @@ class LocalSearchSettings:
 
     def __init__(self):
 
-
+        #### START VARIABLE SETTINGS
 
         self.searchSpace_dict = {'w1': (-10, 10),
                                  # 'w2': (1, 5),
@@ -12,6 +12,7 @@ class LocalSearchSettings:
                                  # 'e1': (-5, 5),
                                  # 'e2': (-5, 5),
                                  # 'e3': (-5, 5),
+                                 # 'temperatureReductionFactor': (0, 1), # TODO: WERKT, WIL IK DIT OP DEZE MANIER VOOR ALLES?
                                  }
 
         self.pbounds_bo = self.searchSpace_dict # voor bo
@@ -21,9 +22,22 @@ class LocalSearchSettings:
 
 
 
+
+
+        ##### START FIXED SETTINGS
+        # if these are not included in th search space (ie 'bounds' or 'space') => use these values as fixed par.
+        self.fixedParameters = {'w1': 10,
+                                'w2': 1,
+                                'w3': 1,
+                                'e1': 1,
+                                'e2': 1,
+                                'e3': 1,
+                                'temperatureReductionFactor': 0.99}
+
+
         self.customSeed = 13
 
-        self.simulatedAnnealing = False
+        self.simulatedAnnealing = True
         self.variableNeighborhoodSearch = False
 
         # neighborhoodrules either jointly or in isolation
@@ -37,7 +51,7 @@ class LocalSearchSettings:
         # SA Settinggs
         self.initialTemperature = 10
         self.iterationsPerTemperatureReduction = 10
-        self.temperatureReductionFactor = 0.99
+        # self.temperatureReductionFactor = 0.99
         self.evaluations = 0
         self.temperature = self.initialTemperature
 
