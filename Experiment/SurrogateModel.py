@@ -41,7 +41,7 @@ def updateScoreSingleInstance(self, solver, customSettings, binPackingSettings):
     self.totalScoreTime += instanceScoreTime
     self.totalScoreViolations += instanceScoreViolations
 
-def updateScoreBatch(self, surrogateModelSettings, customSettings, localsAtStart):
+def updateScoreBatch(self, localSearchSettings, surrogateModelSettings, customSettings, localsAtStart):
 
     # Square root of self.totalScoreViolations
     self.totalScoreViolations = -1 * (-1 * self.totalScoreViolations) ** 0.5
@@ -49,14 +49,14 @@ def updateScoreBatch(self, surrogateModelSettings, customSettings, localsAtStart
     # calculate the maximum penalty (in case all parameters attain their most extreme value)
     maximumPenaltyRegularization = 0
     penaltyRegularizationForThisParameterConfiguration = 0
-    for key in surrogateModelSettings.pbounds_bo: # loop over all variables
+    for key in localSearchSettings.pbounds_bo: # loop over all variables
         # take their most extreme bound: the maximum value of the absolute values of the lower and the upper bound
         #   or: max(abs(lb), abs(ub))
         # and raise it to the exponent of the regularization factor
-        maximumPenaltyRegularization += max(abs(surrogateModelSettings.pbounds_bo[key][0]), abs(surrogateModelSettings.pbounds_bo[key][1])) ** customSettings.regularizationFactorExponent
+        maximumPenaltyRegularization += max(abs(localSearchSettings.pbounds_bo[key][0]), abs(localSearchSettings.pbounds_bo[key][1])) ** customSettings.regularizationFactorExponent
 
 
-    for i in range(len(surrogateModelSettings.pbounds_bo)):
+    for i in range(len(localSearchSettings.pbounds_bo)):
         penaltyRegularizationForThisParameterConfiguration += localsAtStart[i][1] ** customSettings.regularizationFactorExponent
 
     # normalize over maximum penalty:
@@ -98,7 +98,7 @@ class BayesianSurrogateModel(SurrogateModel):
 
         # TODO: HOE KAN IK HIER DE INPUT PARAMETERS ONAFHANKELIJK MAKEN? ZOALS 'params' by hyperopt
         def black_box_function(w1, w3):
-            localsAtStart = list(locals().items())[:len(surrogateModelSettings.pbounds_bo)]
+            localsAtStart = list(locals().items())[:len(localSearchSettings.pbounds_bo)]
             localsAtStart_dict = locals()
             print('attempting: ', localsAtStart)
 
@@ -121,7 +121,7 @@ class BayesianSurrogateModel(SurrogateModel):
                 updateScoreSingleInstance(self, solver, customSettings, binPackingSettings)
 
             # Update the score based on the solving performance of the batch
-            updateScoreBatch(self, surrogateModelSettings, customSettings, localsAtStart)
+            updateScoreBatch(self, localSearchSettings, surrogateModelSettings, customSettings, localsAtStart)
 
             if surrogateModelSettings.printInformation_bo:
                 printInfo(self)
@@ -131,7 +131,7 @@ class BayesianSurrogateModel(SurrogateModel):
 
         self.optimizer = BayesianOptimization(
             f=black_box_function,
-            pbounds=surrogateModelSettings.pbounds_bo,
+            pbounds=localSearchSettings.pbounds_bo,
             random_state=surrogateModelSettings.randomState_bo,
         )
 
@@ -211,7 +211,7 @@ class HyperoptSurrogateModel(SurrogateModel):
                 updateScoreSingleInstance(self, solver, customSettings, binPackingSettings)
 
             # Update the score based on the solving performance of the batch
-            updateScoreBatch(self, surrogateModelSettings, customSettings, list(params.items())[:len(surrogateModelSettings.space_ho)])
+            updateScoreBatch(self, localSearchSettings, surrogateModelSettings, customSettings, list(params.items())[:len(localSearchSettings.space_ho)])
 
             if surrogateModelSettings.printInformation_ho:
                 printInfo(self)
@@ -221,10 +221,10 @@ class HyperoptSurrogateModel(SurrogateModel):
         # minimize the objective over the space
         best = hyperopt.fmin(
             fn=objective,
-            space=surrogateModelSettings.space_ho,
+            space=localSearchSettings.space_ho,
             algo=hyperopt.tpe.suggest,
             max_evals=surrogateModelSettings.max_evals_ho,
             rstate=surrogateModelSettings.rstate_ho
         )
 
-        print(hyperopt.space_eval(surrogateModelSettings.space_ho, best))
+        print(hyperopt.space_eval(localSearchSettings.space_ho, best))
