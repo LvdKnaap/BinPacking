@@ -6,7 +6,7 @@ class LocalSearchSettings:
         self.customSeed = 13
 
         self.simulatedAnnealing = False
-        self.variableNeighborhoodSearch = True
+        self.variableNeighborhoodSearch = False
 
         # neighborhoodrules either jointly or in isolation
         self.useMoveJoint = False

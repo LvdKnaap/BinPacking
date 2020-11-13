@@ -43,6 +43,10 @@ def updateScoreSingleInstance(self, solver, customSettings, binPackingSettings):
     self.totalScoreViolations += instanceScoreViolations
 
 def updateScoreBatch(self, surrogateModelSettings, customSettings, localsAtStart):
+
+    # Square root of self.totalScoreViolations
+    self.totalScoreViolations = -1 * (-1 * self.totalScoreViolations) ** 0.5
+
     # calculate the maximum penalty (in case all parameters attain their most extreme value)
     maximumPenaltyRegularization = 0
     penaltyRegularizationForThisParameterConfiguration = 0
@@ -93,7 +97,6 @@ class BayesianSurrogateModel(SurrogateModel):
         self.binPackingSettings = binPackingSettings
 
 
-        # TODO: HOE KAN IK HIER DE INPUT PARAMETERS ONAFHANKELIJK MAKEN? ZOALS 'params' by hyperopt
         def black_box_function(w1, w3):
             localsAtStart = list(locals().items())[:len(surrogateModelSettings.pbounds_bo)]
             localsAtStart_dict = locals()
