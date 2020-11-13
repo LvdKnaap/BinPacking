@@ -25,7 +25,6 @@ def updateScoreSingleInstance(self, solver, customSettings, binPackingSettings):
     instanceScoreTime = -solver.solveTime / customSettings.timeLimit
 
     # 3:
-    # Todo: deze belangrijker aanwezig maken. Wil ik op een manier toch weer 'solver.maximumViolationsOverViolationTypes' gebruiken?
     instanceScoreViolations = -sum(solver.violationsPerType) / solver.numberOfConstraints
 
     # Normalize 2 + 3
@@ -97,6 +96,7 @@ class BayesianSurrogateModel(SurrogateModel):
         self.binPackingSettings = binPackingSettings
 
 
+        # TODO: HOE KAN IK HIER DE INPUT PARAMETERS ONAFHANKELIJK MAKEN? ZOALS 'params' by hyperopt
         def black_box_function(w1, w3):
             localsAtStart = list(locals().items())[:len(surrogateModelSettings.pbounds_bo)]
             localsAtStart_dict = locals()
