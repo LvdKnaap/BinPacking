@@ -1,4 +1,5 @@
 import hyperopt as hyperopt
+import numpy as np
 
 class SurrogateModelSettings:
 
@@ -8,11 +9,11 @@ class SurrogateModelSettings:
         self.hyperOpt = True
 
         self.searchSpace_dict = {'w1': (-10, 10),
-                                 'w2': (1, 5),
+                                 # 'w2': (1, 5),
                                  'w3': (-1, 3),
-                                 'e1': (-5, 5),
-                                 'e2': (-5, 5),
-                                 'e3': (-5, 5),
+                                 # 'e1': (-5, 5),
+                                 # 'e2': (-5, 5),
+                                 # 'e3': (-5, 5),
                                  }
 
 
@@ -38,11 +39,11 @@ class SurrogateModelSettings:
         #     'w3': hyperopt.hp.uniform('w3', 1, 3),
         # }
 
-
+        self.randomState = 13
 
         # BAYESIAN OPTIMISATION SETTINGS
         self.printInformation_bo = True
-        self.randomState_bo = 13
+        self.randomState_bo = self.randomState
         self.init_points_bo = 3
         self.n_iter_bo = 2
         self.acq_bo = 'ucb' # 'ei'
@@ -52,5 +53,5 @@ class SurrogateModelSettings:
         # HYPEROPT SETTINGS
         self.printInformation_ho = True
         self.algo_ho = 'hyperopt.tpe.suggest'
-        self.max_evals_ho = 1
-        # TODO: HYPEROPT MOET OOK EEN RANDOMSTATE OID, een seed
+        self.max_evals_ho = 5
+        self.rstate_ho = np.random.RandomState(self.randomState)

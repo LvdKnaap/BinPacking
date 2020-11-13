@@ -63,9 +63,9 @@ def updateScoreBatch(self, surrogateModelSettings, customSettings, localsAtStart
 
 
 def printInfo(self):
-    print(['tot:', round(self.totalScoreSolvedInstances + self.totalScoreTime + self.totalScoreViolations + self.totalScoreRegularizationFactor,2),
-           '   per category: ', round(self.totalScoreSolvedInstances, 2), round(self.totalScoreTime, 2), round(self.totalScoreViolations, 2),
-          round(self.totalScoreRegularizationFactor, 2)])
+    print(['tot:', round(self.totalScoreSolvedInstances + self.totalScoreTime + self.totalScoreViolations + self.totalScoreRegularizationFactor,3),
+           '   per category: ', round(self.totalScoreSolvedInstances, 3), round(self.totalScoreTime, 3), round(self.totalScoreViolations, 3),
+          round(self.totalScoreRegularizationFactor, 3)])
 
 
 
@@ -162,28 +162,30 @@ class HyperoptSurrogateModel(SurrogateModel):
         self.localSearchSettings = localSearchSettings
         self.customSettings = customSettings
         self.binPackingSettings = binPackingSettings
+        self.count = 1
 
 
         def objective(params):
+            print(["ITERATION: ", self.count]); self.count += 1
             attemptingPrint = []
             if 'w1' in params:
                 w1 = params['w1']
-                attemptingPrint.append(round(w1, 2))
+                attemptingPrint.append(['w1', round(w1, 2)])
             if 'e1' in params:
                 e1 = params['e1']
-                attemptingPrint.append(round(e1, 2))
+                attemptingPrint.append(['e1', round(e1, 2)])
             if 'w2' in params:
                 w2 = params['w2']
-                attemptingPrint.append(round(w2, 2))
+                attemptingPrint.append(['w2', round(w2, 2)])
             if 'e2' in params:
                 e2 = params['e2']
-                attemptingPrint.append(round(e2, 2))
+                attemptingPrint.append(['e2', round(e2, 2)])
             if 'w3' in params:
                 w3 = params['w3']
-                attemptingPrint.append(round(w3, 2))
+                attemptingPrint.append(['w3', round(w3, 2)])
             if 'e3' in params:
                 e3 = params['e3']
-                attemptingPrint.append(round(e3, 2))
+                attemptingPrint.append(['e3', round(e3, 2)])
 
             print('attempting: ', attemptingPrint)
 
@@ -218,7 +220,8 @@ class HyperoptSurrogateModel(SurrogateModel):
             fn=objective,
             space=surrogateModelSettings.space_ho,
             algo=hyperopt.tpe.suggest,
-            max_evals=surrogateModelSettings.max_evals_ho
+            max_evals=surrogateModelSettings.max_evals_ho,
+            rstate=surrogateModelSettings.rstate_ho
         )
 
         print(hyperopt.space_eval(surrogateModelSettings.space_ho, best))

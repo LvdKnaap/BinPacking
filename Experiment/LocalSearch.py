@@ -26,8 +26,10 @@ class LocalSearch2:
 
     currentlyInVNS = False
 
+
     def __init__(self, localSearchSettings):
         self.localSearchSettings = localSearchSettings
+        rd.seed(localSearchSettings.customSeed)
 
         if localSearchSettings.simulatedAnnealing:
             self.localSearchtype = 'SA'
@@ -50,24 +52,18 @@ class LocalSearch2:
         while improved and not self.shouldWeTerminate():
             improved = self.performOneIteration(binPackingInstance)
 
-            # TODO: DE HUIDIGE VNS DOET GEWOON WAT STAPPEN. BEKIJK GOED DE HIP CODE.
             if not improved and self.localSearchSettings.variableNeighborhoodSearch:
-                print('in a local optimum'); print(self.curr_solution);  print('starting VNS')
+                # print('in a local optimum'); print(self.curr_solution);  print('starting VNS')
                 self.currentlyInVNS = True
                 numberOfWalks = rd.randint(self.localSearchSettings.minRandomWalks,
                                            self.localSearchSettings.maxRandomWalks)
-                print('numberOfWalks', numberOfWalks)
                 for shake in range(numberOfWalks):
                     self.performOneIteration(binPackingInstance)
-                    print(self.curr_solution);
-
                 self.currentlyInVNS = False
-
-
-                improved = True # is dit handig?
+                improved = True
 
         # register the end time
-        self.solveTime = round(time.time() - self.startTime, 3)
+        self.solveTime = time.time() - self.startTime
 
         if binPackingInstance.binPackingSettings.printInformation:
             print('FINAL SOLUTION'); print(self.curr_solution); print(self.curr_solutionValue)
@@ -245,7 +241,7 @@ class LocalSearch2:
                  self.numberOfConstraints] = binPackingInstance.evaluate(new_solution, self)
                     # new_solution, self.w1, self.e1, self.w2, self.e2, self.w3, self.e3)
                 self.curr_solution = new_solution
-                print('accepted because VNS', self.curr_solutionValue)
+                # print('accepted because VNS', self.curr_solutionValue)
                 return True
 
 

@@ -3,8 +3,10 @@ class LocalSearchSettings:
 
     def __init__(self):
 
-        self.simulatedAnnealing = True
-        self.variableNeighborhoodSearch = False
+        self.customSeed = 13
+
+        self.simulatedAnnealing = False
+        self.variableNeighborhoodSearch = True
 
         # neighborhoodrules either jointly or in isolation
         self.useMoveJoint = False
