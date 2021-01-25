@@ -9,19 +9,25 @@ class BinPackingSettings:
         self.batchSizeType3 = 0
         self.batchSizeType4 = 0
         self.batchSizeType5 = 0
-        self.batchSizeType6 = 5
-        self.batchSize = self.batchSizeType1 + self.batchSizeType2 + self.batchSizeType3 + self.batchSizeType4 + self.batchSizeType5 + self.batchSizeType6
+        self.batchSizeType6 = 1000
+        self.batchSizeType7 = 0
+        self.batchSizeType8 = 0
+        self.batchSize = self.batchSizeType1 + self.batchSizeType2 + self.batchSizeType3 + self.batchSizeType4 + self.batchSizeType5 + self.batchSizeType6 + self.batchSizeType7 + self.batchSizeType8
 
         self.LB1 = 4
-        self.stepsize1 = 2
+        self.stepSize1 = 2
         self.LB2 = 5
-        self.stepsize2 = 5
-        self.LB3 = 50
-        self.stepSize3 = 10
+        self.stepSize2 = 5
+        self.LB3 = 15
+        self.stepSize3 = 2
         self.LB4 = 20
         self.stepSize4 = 2
         self.LB5 = 10
         self.stepSize5 = 1
-        self.LB6 = 5
-        self.stepSize6 = 1
+        self.LB6 = 12
+        self.stepSize6 = 0
+        self.LB7 = 5
+        self.stepSize7 = 1
+        self.LB8 = 10
+        self.stepSize8 = 1
         ##########################

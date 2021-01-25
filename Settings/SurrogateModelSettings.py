@@ -8,16 +8,14 @@ class SurrogateModelSettings:
         self.BO = True
         self.hyperOpt = True
 
-
-
-
         self.randomState = 13
-
         # BAYESIAN OPTIMISATION SETTINGS
         self.printInformation_bo = True
         self.randomState_bo = self.randomState
-        self.init_points_bo = 3
-        self.n_iter_bo = 2
+        self.init_points_bo = 1
+        self.n_iter_bo = 0
+        # self.init_points_bo = 3
+        # self.n_iter_bo = 97
         self.acq_bo = 'ucb' # 'ei'
         # self.alpha = 1e-2
 

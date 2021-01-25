@@ -8,9 +8,9 @@ class BinPackingBatchCustom:
         self.instances = []
 
         for i in range(binPackingSettings.batchSizeType1):
-            self.instances.append(BinPackingCustom(binPackingSettings.stepsize1*i+binPackingSettings.LB1, 1, binPackingSettings))
+            self.instances.append(BinPackingCustom(binPackingSettings.stepSize1*i+binPackingSettings.LB1, 1, binPackingSettings))
         for i in range(binPackingSettings.batchSizeType2):
-            self.instances.append(BinPackingCustom(binPackingSettings.stepsize2*i+binPackingSettings.LB2, 2, binPackingSettings))
+            self.instances.append(BinPackingCustom(binPackingSettings.stepSize2*i+binPackingSettings.LB2, 2, binPackingSettings))
         for i in range(binPackingSettings.batchSizeType3):
             self.instances.append(BinPackingCustom(binPackingSettings.stepSize3*i+binPackingSettings.LB3, 3, binPackingSettings))
         for i in range(binPackingSettings.batchSizeType4):
@@ -19,6 +19,10 @@ class BinPackingBatchCustom:
             self.instances.append(BinPackingCustom(binPackingSettings.stepSize5*i+binPackingSettings.LB5, 5, binPackingSettings))
         for i in range(binPackingSettings.batchSizeType6):
             self.instances.append(BinPackingCustom(binPackingSettings.stepSize6*i+binPackingSettings.LB6, 6, binPackingSettings))
+        for i in range(binPackingSettings.batchSizeType7):
+            self.instances.append(BinPackingCustom(binPackingSettings.stepSize7*i+binPackingSettings.LB7, 7, binPackingSettings))
+        for i in range(binPackingSettings.batchSizeType8):
+            self.instances.append(BinPackingCustom(binPackingSettings.stepSize8*i+binPackingSettings.LB8, 8, binPackingSettings))
 
 
 class BinPackingCustom:
@@ -106,6 +110,23 @@ class BinPackingCustom:
                 self.capacities.append(i+1)
             for i in range(numItems):
                 self.itemWeights.append(i+1)
+
+
+        elif type == 7:
+            # type 7: N items, N bins, unieke item weights = bin sizes = 1, 10, 100, ... 10^(N-1)
+            # Dus er bestaat maaar 1 oplossing: optimale solution moet er uit zien als identity matrix
+            self.numBins = numItems
+            for i in range(self.numBins):
+                self.capacities.append(2 ** i)
+            for i in range(numItems):
+                self.itemWeights.append(2 ** i)
+
+        elif type == 8:
+            # test: alle bins en items grootte 1
+            self.numBins = numItems
+            for i in range(numItems):
+                self.capacities.append(1)
+                self.itemWeights.append(1)
         else:
             print('undefined type')
 
@@ -122,9 +143,10 @@ class BinPackingCustom:
             print()
 
 
-
-    # def evaluate(self, allocation, w1, e1, w2, e2, w3, e3):
     def evaluate(self, allocation, solver):
+
+        # print(solver.w1, solver.w2, solver.w3, 'lookup')
+
         # allocations heeft items op rijen, bins op kolommen
         violationsPerType = []
         objective = 0
@@ -175,6 +197,7 @@ class BinPackingCustom:
         # print(w1 * countUnassignedItems ** e1, w2 * totalPenaltyForCapViolation)
 
         maximumViolationsOverViolationTypes = max(violationsPerType)
+
         return [-1 * objective, maximumViolationsOverViolationTypes, violationsPerType, self.numberOfConstraints]
 
 

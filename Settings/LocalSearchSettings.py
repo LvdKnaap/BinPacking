@@ -6,9 +6,16 @@ class LocalSearchSettings:
 
         #### START VARIABLE SETTINGS
 
-        self.searchSpace_dict = {'w1': (-10, 10),
+        self.searchSpace_dict = {
+                                 # 'w1': (-5, 5),
+                                 # 'w1': (3.828, 3.8281),
+                                  'w1': (4.4472, 4.44721),
+                                 # 'w1': (-1.54123, -1.54122),
                                  # 'w2': (1, 5),
-                                 'w3': (-1, 3),
+                                 # 'w3': (-3, 3),
+                                 # 'w3': (0.19886, 0.19887),
+                                 # 'w3': (0.2678, 0.26781),
+                                  'w3': (1.3884, 1.3885),
                                  # 'e1': (-5, 5),
                                  # 'e2': (-5, 5),
                                  # 'e3': (-5, 5),
@@ -27,7 +34,7 @@ class LocalSearchSettings:
         ##### START FIXED SETTINGS
         # if these are not included in th search space (ie 'bounds' or 'space') => use these values as fixed par.
         self.fixedParameters = {'w1': 10,
-                                'w2': 1,
+                                'w2': 0,
                                 'w3': 1,
                                 'e1': 1,
                                 'e2': 1,
@@ -35,10 +42,11 @@ class LocalSearchSettings:
                                 'temperatureReductionFactor': 0.99}
 
 
+        # als < 0 dan wordtie genegeerd
         self.customSeed = 13
 
-        self.simulatedAnnealing = True
-        self.variableNeighborhoodSearch = False
+        self.simulatedAnnealing = False
+        self.variableNeighborhoodSearch = True
 
         # neighborhoodrules either jointly or in isolation
         self.useMoveJoint = False

@@ -23,6 +23,6 @@ if surrogateModelSettings.BO:
 # NO SURROGATE: JUST LOCAL SEARCH ON BIN PACKING
 # binpackingBatch = BinPackingBatchCustom(binPackingSettings)
 # solver = LocalSearch2(localSearchSettings)
-# solver.setInitialWeights(surrogateModelSettings) # will not be updated by variable weights
+# solver.setInitialWeights(localSearchSettings) # will not be updated by variable weights
 # for i in range(binPackingSettings.batchSize):
 #     solver.solve(binpackingBatch.instances[i], customSettings.timeLimit)

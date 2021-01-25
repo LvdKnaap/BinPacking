@@ -9,6 +9,7 @@ class LocalSearch2:
     # // weight parameters
     w1, e1, w2, e2, w3, e3 = -1, -1, -1, -1, -1, -1
     temperatureReductionFactor = -1; # nog in test
+    temperature = -1 # nog in test
 
     localSearchSettings = ""
     localSearchtype = ""
@@ -31,7 +32,8 @@ class LocalSearch2:
 
     def __init__(self, localSearchSettings):
         self.localSearchSettings = localSearchSettings
-        rd.seed(localSearchSettings.customSeed)
+        if localSearchSettings.customSeed > 0:
+            rd.seed(localSearchSettings.customSeed)
 
         if localSearchSettings.simulatedAnnealing:
             self.localSearchtype = 'SA'
@@ -43,6 +45,7 @@ class LocalSearch2:
 
 
     def solve(self, binPackingInstance, timeLimit):
+
         self.curr_solution = self.createInitialSolution(binPackingInstance)
         # [self.curr_solutionValue, self.maximumViolationsOverViolationTypes, self.violationsPerType, self.numberOfConstraints] = binPackingInstance.evaluate(self.curr_solution, self.w1, self.e1, self.w2, self.e2, self.w3, self.e3)
         [self.curr_solutionValue, self.maximumViolationsOverViolationTypes, self.violationsPerType, self.numberOfConstraints] = binPackingInstance.evaluate(self.curr_solution, self)
@@ -69,6 +72,8 @@ class LocalSearch2:
 
         if binPackingInstance.binPackingSettings.printInformation:
             print('FINAL SOLUTION'); print(self.curr_solution); print(self.curr_solutionValue)
+
+        self.localSearchSettings.temperature = 10;
 
 
     def performOneIteration(self, binPackingInstance):
@@ -211,8 +216,6 @@ class LocalSearch2:
         if self.localSearchSettings.simulatedAnnealing and self.localSearchSettings.evaluations % self.localSearchSettings.iterationsPerTemperatureReduction == 0:
             self.localSearchSettings.temperature = self.temperatureReductionFactor * self.localSearchSettings.temperature;
 
-
-
         # always accept improvements:
         # if binPackingInstance.evaluate(new_solution, self.w1, self.e1, self.w2, self.e2, self.w3, self.e3)[0] > self.curr_solutionValue:  # > because maximizatione:
         if binPackingInstance.evaluate(new_solution, self)[0] > self.curr_solutionValue:  # > because maximizatione
@@ -275,26 +278,31 @@ class LocalSearch2:
 
     # Set all weights to specified in settings. They will be overwritten by setVariableWeights
     def setInitialWeights(self, localSearchSettings):
-        self.w1 = localSearchSettings.fixedParameters['w1']
+        self.w1 = 2 ** localSearchSettings.fixedParameters['w1']
         self.e1 = localSearchSettings.fixedParameters['e1']
-        self.w2 = localSearchSettings.fixedParameters['w2']
+        self.w2 = 2 ** localSearchSettings.fixedParameters['w2']
         self.e2 = localSearchSettings.fixedParameters['e2']
-        self.w3 = localSearchSettings.fixedParameters['w3']
+        self.w3 = 2 ** localSearchSettings.fixedParameters['w3']
         self.e3 = localSearchSettings.fixedParameters['e3']
         self.temperatureReductionFactor = localSearchSettings.fixedParameters['temperatureReductionFactor']
+
+
 
     # Only overwrite variable weights
     def setVariableWeights(self, localsAtStart_dict):
         if 'w1' in localsAtStart_dict:
-            self.w1 = localsAtStart_dict['w1']
+            # self.w1 = 2 ** localsAtStart_dict['w1']
+            self.w1 = round(2 ** round(localsAtStart_dict['w1'], 3), 3)
         if 'e1' in localsAtStart_dict:
             self.e1 = localsAtStart_dict['e1']
         if 'w2' in localsAtStart_dict:
-            self.w2 = localsAtStart_dict['w2']
+            # self.w2 = 2 ** localsAtStart_dict['w2']
+            self.w2 = round(2 ** round(localsAtStart_dict['w2'], 3), 3)
         if 'e2' in localsAtStart_dict:
             self.e2 = localsAtStart_dict['e2']
         if 'w3' in localsAtStart_dict:
-            self.w3 = localsAtStart_dict['w3']
+            # self.w3 = 2 ** localsAtStart_dict['w3']
+            self.w3 = round(2 ** round(localsAtStart_dict['w3'], 3), 3) # TODO DUURT DIT LANG OFZO?
         if 'e3' in localsAtStart_dict:
             self.e3 = localsAtStart_dict['e3']
         if 'temperatureReductionFactor' in localsAtStart_dict:
