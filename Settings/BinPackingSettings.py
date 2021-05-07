@@ -9,8 +9,8 @@ class BinPackingSettings:
         self.batchSizeType3 = 0
         self.batchSizeType4 = 0
         self.batchSizeType5 = 0
-        self.batchSizeType6 = 0
-        # self.batchSizeType6 = 10
+        # self.batchSizeType6 = 0
+        self.batchSizeType6 = 10
         self.batchSizeType7 = 0
         self.batchSizeType8 = 0
         self.batchSize = self.batchSizeType1 + self.batchSizeType2 + self.batchSizeType3 + self.batchSizeType4 + self.batchSizeType5 + self.batchSizeType6 + self.batchSizeType7 + self.batchSizeType8
@@ -26,13 +26,13 @@ class BinPackingSettings:
         self.LB5 = 10
         self.stepSize5 = 1
         # self.LB6 = 12
-        self.LB6 = 8
-        self.stepSize6 = 0
-        # self.stepSize6 = 1
+        self.LB6 = 5
+        # self.stepSize6 = 0
+        self.stepSize6 = 1
         self.LB7 = 5
         self.stepSize7 = 1
         # self.LB8 = 10
         self.LB8 = 5
-        # self.stepSize8 = 1
-        self.stepSize8 = 0
+        self.stepSize8 = 1
+        # self.stepSize8 = 0
         ##########################

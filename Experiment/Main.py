@@ -10,17 +10,17 @@ customSettings, localSearchSettings, surrogateModelSettings, binPackingSettings 
     CustomSettings(), LocalSearchSettings(), SurrogateModelSettings(), BinPackingSettings()
 
 
-##### DIT WAS EERST DE HELE MAIN CLASS
-# customSettings, localSearchSettings, surrogateModelSettings, binPackingSettings = \
-#     CustomSettings(), LocalSearchSettings(), SurrogateModelSettings(), BinPackingSettings()
-#
-# if surrogateModelSettings.BO:
-#     surrogateModel = BayesianSurrogateModel(surrogateModelSettings, localSearchSettings,
-#                                             customSettings, binPackingSettings).solve(surrogateModelSettings)
+#### DIT WAS EERST DE HELE MAIN CLASS
+customSettings, localSearchSettings, surrogateModelSettings, binPackingSettings = \
+    CustomSettings(), LocalSearchSettings(), SurrogateModelSettings(), BinPackingSettings()
 
-# if surrogateModelSettings.hyperOpt:
-#     surrogateModel = HyperoptSurrogateModel(surrogateModelSettings, localSearchSettings,
-#                                             customSettings, binPackingSettings)
+if surrogateModelSettings.BO:
+    surrogateModel = BayesianSurrogateModel(surrogateModelSettings, localSearchSettings,
+                                            customSettings, binPackingSettings).solve(surrogateModelSettings)
+
+if surrogateModelSettings.hyperOpt:
+    surrogateModel = HyperoptSurrogateModel(surrogateModelSettings, localSearchSettings,
+                                            customSettings, binPackingSettings)
 #
 
 
