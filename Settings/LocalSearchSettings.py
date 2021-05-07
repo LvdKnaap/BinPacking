@@ -8,14 +8,18 @@ class LocalSearchSettings:
 
         self.searchSpace_dict = {
                                  # 'w1': (-5, 5),
+                                 # 'w1': (-10, 10),
+                                 'w1': (4.507, 4.5071),
                                  # 'w1': (3.828, 3.8281),
-                                  'w1': (4.4472, 4.44721),
+                                 #  'w1': (4.4472, 4.44721),
                                  # 'w1': (-1.54123, -1.54122),
                                  # 'w2': (1, 5),
                                  # 'w3': (-3, 3),
+                                 # 'w3': (-5, 5),
+                                 'w3': (-0.244, -0.2439),
                                  # 'w3': (0.19886, 0.19887),
                                  # 'w3': (0.2678, 0.26781),
-                                  'w3': (1.3884, 1.3885),
+                                 #  'w3': (1.3884, 1.3885),
                                  # 'e1': (-5, 5),
                                  # 'e2': (-5, 5),
                                  # 'e3': (-5, 5),
@@ -43,7 +47,8 @@ class LocalSearchSettings:
 
 
         # als < 0 dan wordtie genegeerd
-        self.customSeed = 13
+        self.customSeed = -1
+        # self.customSeed = 13
 
         self.simulatedAnnealing = False
         self.variableNeighborhoodSearch = True

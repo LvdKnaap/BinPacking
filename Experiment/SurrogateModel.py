@@ -71,8 +71,8 @@ def updateScoreBatch(self, localSearchSettings, surrogateModelSettings, customSe
 
 
 def printInfo(self):
-    print(['tot:', round(self.totalScoreSolvedInstances + self.totalScoreTime + self.totalScoreViolations + self.totalScoreRegularizationFactor,3),
-           '   per category: ', round(self.totalScoreSolvedInstances, 3), round(self.totalScoreTime, 3), round(self.totalScoreViolations, 3),
+    print('\t\t\t\t', ['tot:', round(self.totalScoreSolvedInstances + self.totalScoreTime + self.totalScoreViolations + self.totalScoreRegularizationFactor,3),
+           '    per category: ', round(self.totalScoreSolvedInstances, 3), round(self.totalScoreTime, 3), round(self.totalScoreViolations, 3),
           round(self.totalScoreRegularizationFactor, 3)])
 
 
