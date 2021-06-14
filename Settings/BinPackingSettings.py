@@ -9,10 +9,9 @@ class BinPackingSettings:
         self.batchSizeType3 = 0
         self.batchSizeType4 = 0
         self.batchSizeType5 = 0
-        # self.batchSizeType6 = 0
-        self.batchSizeType6 = 10
+        self.batchSizeType6 = 0
         self.batchSizeType7 = 0
-        self.batchSizeType8 = 0
+        self.batchSizeType8 = 10
         self.batchSize = self.batchSizeType1 + self.batchSizeType2 + self.batchSizeType3 + self.batchSizeType4 + self.batchSizeType5 + self.batchSizeType6 + self.batchSizeType7 + self.batchSizeType8
 
         self.LB1 = 4

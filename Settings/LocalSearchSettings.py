@@ -45,8 +45,8 @@ class LocalSearchSettings:
 
 
         # als < 0 dan wordtie genegeerd
-        self.customSeed = -1
-        # self.customSeed = 13
+        # self.customSeed = -1
+        self.customSeed = 13
 
         self.simulatedAnnealing = False
         self.variableNeighborhoodSearch = True
