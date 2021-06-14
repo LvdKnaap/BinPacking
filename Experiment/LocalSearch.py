@@ -302,7 +302,7 @@ class LocalSearch2:
             self.e2 = localsAtStart_dict['e2']
         if 'w3' in localsAtStart_dict:
             # self.w3 = 2 ** localsAtStart_dict['w3']
-            self.w3 = round(2 ** round(localsAtStart_dict['w3'], 3), 3) # TODO DUURT DIT LANG OFZO?
+            self.w3 = round(2 ** round(localsAtStart_dict['w3'], 3), 3)
         if 'e3' in localsAtStart_dict:
             self.e3 = localsAtStart_dict['e3']
         if 'temperatureReductionFactor' in localsAtStart_dict:

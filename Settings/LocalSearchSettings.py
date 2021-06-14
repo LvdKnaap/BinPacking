@@ -20,8 +20,7 @@ class LocalSearchSettings:
                                  #  'w3': (1.3884, 1.3885),
                                  # 'e1': (-5, 5),
                                  # 'e2': (-5, 5),
-                                 # 'e3': (-5, 5),
-                                 # 'temperatureReductionFactor': (0, 1), # TODO: WERKT, WIL IK DIT OP DEZE MANIER VOOR ALLES?
+                                 # 'e3': (-5, 5)
                                  }
 
         self.pbounds_bo = self.searchSpace_dict # voor bo

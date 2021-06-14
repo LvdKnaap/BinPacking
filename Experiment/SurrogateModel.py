@@ -25,49 +25,15 @@ def updateScoreSingleInstance(self, solver, customSettings, binPackingSettings):
     instanceScoreTime = -solver.solveTime / customSettings.timeLimit
 
     # 3:
-    # TODO: DIT NU UITGEZET OMDAT IK BIAS VERMOEDT
-    # instanceScoreViolations = -sum(solver.violationsPerType) / solver.numberOfConstraints # uitgezet
-
-    # Normalize 2 + 3
-    # todo: als ik de violations uit zet, moet deze 2 dan weg he?
     instanceScoreTime /= 2 * binPackingSettings.batchSize
-    # instanceScoreViolations /= 2 * binPackingSettings.batchSize # uitgezet
 
     # Normalize all scores over batch size
     instanceScoreSolvedInstances /= binPackingSettings.batchSize
     instanceScoreTime /= binPackingSettings.batchSize
-    # instanceScoreViolations /= binPackingSettings.batchSize # uitgezet
 
     # Update the score components
     self.totalScoreSolvedInstances += instanceScoreSolvedInstances
     self.totalScoreTime += instanceScoreTime
-    # self.totalScoreViolations += instanceScoreViolations # uitgezet
-
-def updateScoreBatch(self, localSearchSettings, surrogateModelSettings, customSettings, localsAtStart):
-
-    a = 0; # even zodat het lijkt of er iets gebeurd
-
-    # Square root of self.totalScoreViolations
-    # self.totalScoreViolations = -1 * (-1 * self.totalScoreViolations) ** 0.5 # uitgezet
-
-    # calculate the maximum penalty (in case all parameters attain their most extreme value)
-    # Todo: regularization term tijdelijk weggecomment.
-    # maximumPenaltyRegularization = 0
-    # penaltyRegularizationForThisParameterConfiguration = 0
-    # for key in localSearchSettings.pbounds_bo: # loop over all variables
-    #     # take their most extreme bound: the maximum value of the absolute values of the lower and the upper bound
-    #     #   or: max(abs(lb), abs(ub))
-    #     # and raise it to the exponent of the regularization factor
-    #     maximumPenaltyRegularization += max(abs(localSearchSettings.pbounds_bo[key][0]), abs(localSearchSettings.pbounds_bo[key][1])) ** customSettings.regularizationFactorExponent
-    #
-    #
-    # for i in range(len(localSearchSettings.pbounds_bo)):
-    #     penaltyRegularizationForThisParameterConfiguration += localsAtStart[i][1] ** customSettings.regularizationFactorExponent
-    #
-    # # normalize over maximum penalty:
-    # penaltyRegularizationForThisParameterConfiguration /= maximumPenaltyRegularization
-    #
-    # self.totalScoreRegularizationFactor -= customSettings.regularizationFactor * penaltyRegularizationForThisParameterConfiguration
 
 
 def printInfo(self):
@@ -100,8 +66,6 @@ class BayesianSurrogateModel(SurrogateModel):
         self.customSettings = customSettings
         self.binPackingSettings = binPackingSettings
 
-
-        # TODO: HOE KAN IK HIER DE INPUT PARAMETERS ONAFHANKELIJK MAKEN? ZOALS 'params' by hyperopt
         def black_box_function(w1, w3):
             localsAtStart = list(locals().items())[:len(localSearchSettings.pbounds_bo)]
             localsAtStart_dict = locals()
@@ -124,9 +88,6 @@ class BayesianSurrogateModel(SurrogateModel):
 
                 # Update the score based on the solving performance of the single instance
                 updateScoreSingleInstance(self, solver, customSettings, binPackingSettings)
-
-            # Update the score based on the solving performance of the batch
-            updateScoreBatch(self, localSearchSettings, surrogateModelSettings, customSettings, localsAtStart)
 
             if surrogateModelSettings.printInformation_bo:
                 printInfo(self)
