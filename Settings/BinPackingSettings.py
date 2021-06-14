@@ -24,14 +24,10 @@ class BinPackingSettings:
         self.stepSize4 = 2
         self.LB5 = 10
         self.stepSize5 = 1
-        # self.LB6 = 12
         self.LB6 = 5
-        # self.stepSize6 = 0
         self.stepSize6 = 1
         self.LB7 = 5
         self.stepSize7 = 1
-        # self.LB8 = 10
         self.LB8 = 5
         self.stepSize8 = 1
-        # self.stepSize8 = 0
         ##########################
